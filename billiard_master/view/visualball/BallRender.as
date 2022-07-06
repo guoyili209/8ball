@@ -78,7 +78,7 @@ package view.visualball
                   xProp = (iVect * rotation.n11 + jVect * rotation.n12 + kVect * rotation.n13) * isBack;
                   yPorp = iVect * rotation.n21 + jVect * rotation.n22 + kVect * rotation.n23;
                   pix = ballSource.getPixel32(sWidth + sWidth * xProp,sHeight + sHeight * yPorp);
-                  // pix = ((pix & 16711935) * colorDeep >> 8 & 16711935) + ((pix & 65280) * colorDeep >> 8 & 65280);
+                  pix = ((pix & 16711935) * colorDeep >> 8 & 16711935) + ((pix & 65280) * colorDeep >> 8 & 65280);
                   if(dist <= _alphaValue)
                   {
                      pix = 4278190080 + pix;
