@@ -34,8 +34,8 @@ package com
          this._holder = new MovieClip();
          for(var n:* = 1; n <= this._numSplatters; n++)
          {
-            ClassReference = getDefinitionByName(className) as Class;
-            mc = new ClassReference();
+            // ClassReference = getDefinitionByName(className) as Class;
+            mc = new star_mc();
             this._splatterArray[n] = mc;
             this._holder.addChild(this._splatterArray[n]);
             this._splatterArray[n].scaleX = scale;

@@ -71,6 +71,7 @@ package fl.managers
             }
             return null;
          }
+         return null;
       }
       
       public static function clearStyle(param1:String) : void

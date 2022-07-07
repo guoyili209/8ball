@@ -6,22 +6,11 @@ package
    import com.Maths;
    import com.ParticleExplosion;
    import com.Sound;
-   import com.SuperGlobals;
    import com.Vector2D;
    import com.billiardPhysics;
    import com.greensock.TweenLite;
    import com.greensock.easing.Quad;
-   import com.smartfoxserver.v2.SmartFox;
-   import com.smartfoxserver.v2.core.SFSEvent;
-   import com.smartfoxserver.v2.entities.User;
-   import com.smartfoxserver.v2.entities.data.ISFSObject;
-   import com.smartfoxserver.v2.entities.data.SFSObject;
-   import com.smartfoxserver.v2.requests.CreateRoomRequest;
-   import com.smartfoxserver.v2.requests.JoinRoomRequest;
-   import com.smartfoxserver.v2.requests.LoginRequest;
-   import com.smartfoxserver.v2.requests.ObjectMessageRequest;
-   import com.smartfoxserver.v2.requests.RoomSettings;
-   import com.smartfoxserver.v2.requests.SubscribeRoomGroupRequest;
+
    import fl.events.ListEvent;
    import flash.display.MovieClip;
    import flash.display.Sprite;
@@ -35,27 +24,25 @@ package
    import flash.net.navigateToURL;
    import flash.ui.Keyboard;
    import flash.utils.setTimeout;
-   import mochi.as3.MochiScores;
-   
+
    [Frame(factoryClass="Preloader")]
    public class Main extends Sprite
    {
-       
-      
+
       public function Main()
       {
          super();
-         if(stage)
+         if (stage)
          {
             this.init();
          }
          else
          {
-            addEventListener(Event.ADDED_TO_STAGE,this.init);
+            addEventListener(Event.ADDED_TO_STAGE, this.init);
          }
       }
-      
-      private function init(e:Event = null) : void
+
+      private function init(e:Event = null):void
       {
          var gameMode:uint = 0;
          var stageWidth:* = undefined;
@@ -190,16 +177,15 @@ package
          var ballArraySim2:Array = null;
          var thisURL:String = null;
          var oldAim:Vector2D = null;
-         var tracker:* = undefined;
+
          var initMenus2:Function = null;
-         var gotoSponsor:Function = null;
-         var gotoAndromedus:Function = null;
+
          var connectionScreenToPracticeGame:Function = null;
          var menuToCredits:Function = null;
          var creditsToMenu:Function = null;
          var mainMenuToLevelSelect:Function = null;
          var levelSelectToMenu:Function = null;
-         var levelSelectToGame:Function = null;
+         // var levelSelectToGame:Function = null;
          var challengeToGame:Function = null;
          var challengeToLevelSelect:Function = null;
          var showScores:Function = null;
@@ -212,8 +198,7 @@ package
          var musicOver:Function = null;
          var musicUp:Function = null;
          var toggleMusic:Function = null;
-         var sfs:SmartFox = null;
-         var connectToServer:Function = null;
+
          var onConnection:Function = null;
          var onConnectionLost:Function = null;
          var onLogin:Function = null;
@@ -262,7 +247,7 @@ package
          var submitScore:Function = null;
          var initMenus:Function = function():void
          {
-            tracker = SuperGlobals.tracker;
+
             projectCanvas = new Sprite();
             stage.addChild(projectCanvas);
             debug = new debug_mc();
@@ -273,8 +258,8 @@ package
             stage.frameRate = 70;
             splash = new splash_mc();
             stage.addChild(splash);
-            splash.hotspot.addEventListener(MouseEvent.CLICK,gotoSponsor);
-            stage.addEventListener("LAST_FRAME",initMenus2);
+
+            stage.addEventListener("LAST_FRAME", initMenus2);
          };
          initMenus2 = function(e:*):*
          {
@@ -292,7 +277,7 @@ package
             initialiseSoundToggle();
             initialiseMusicToggle();
             var musicSound:* = new music();
-            musicChannel = musicSound.play(0,100);
+            musicChannel = musicSound.play(0, 100);
             soundToggle.x = 22;
             soundToggle.y = 563;
             musicToggle.x = 58;
@@ -309,56 +294,39 @@ package
             allowedURLs.push("andromedus.com");
             allowedURLs.push("Richard/Documents/");
             allowedURLs.push("flashgamelicense.com");
-            if(currentURL.indexOf(allowedURLs[0],0) != -1 || currentURL.indexOf(allowedURLs[1],0) != -1 || currentURL.indexOf(allowedURLs[2],0) != -1)
+            if (currentURL.indexOf(allowedURLs[0], 0) != -1 || currentURL.indexOf(allowedURLs[1], 0) != -1 || currentURL.indexOf(allowedURLs[2], 0) != -1)
             {
                urlAllowed = true;
             }
-            if(securityOn == false || urlAllowed == true)
+            if (securityOn == false || urlAllowed == true)
             {
-               mainMenu._PLAY_.addEventListener(MouseEvent.CLICK,mainMenuToLevelSelect);
+               mainMenu._PLAY_.addEventListener(MouseEvent.CLICK, mainMenuToLevelSelect);
             }
-            mainMenu._MORE_GAMES_.addEventListener(MouseEvent.CLICK,gotoSponsor);
-            mainMenu._CREDITS_.addEventListener(MouseEvent.CLICK,menuToCredits);
-            mainMenu.sponsorLogo.addEventListener(MouseEvent.CLICK,gotoSponsor);
+
+            mainMenu._CREDITS_.addEventListener(MouseEvent.CLICK, menuToCredits);
+
          };
          var removeMainMenu:Function = function():void
          {
-            mainMenu._PLAY_.removeEventListener(MouseEvent.CLICK,mainMenuToLevelSelect);
-            mainMenu._MORE_GAMES_.removeEventListener(MouseEvent.CLICK,gotoSponsor);
-            mainMenu._CREDITS_.removeEventListener(MouseEvent.CLICK,menuToCredits);
-            mainMenu.sponsorLogo.removeEventListener(MouseEvent.CLICK,gotoSponsor);
+            mainMenu._PLAY_.removeEventListener(MouseEvent.CLICK, mainMenuToLevelSelect);
+
+            mainMenu._CREDITS_.removeEventListener(MouseEvent.CLICK, menuToCredits);
+
             projectCanvas.removeChild(mainMenu);
             mainMenu = null;
          };
-         var gotoHostGame:Function = function(e:MouseEvent):void
-         {
-            tracker.trackEvent("Events","clicked host game");
-            var url:URLRequest = new URLRequest("http://zayplay.com/page/games-for-your-website.html?utm_source=" + thisURL + "&utm_medium=flashgame&utm_campaign=Billard-Blitz-Pool-Skool");
-            navigateToURL(url,"_blank");
-         };
-         gotoSponsor = function(e:MouseEvent):void
-         {
-            tracker.trackEvent("Events","clicked sponsor link");
-            var url:URLRequest = new URLRequest("http://zayplay.com?utm_source=" + thisURL + "&utm_medium=flashgame&utm_campaign=Billard-Blitz-Pool-Skool");
-            navigateToURL(url,"_blank");
-         };
-         gotoAndromedus = function(e:MouseEvent):void
-         {
-            tracker.trackEvent("Events","clicked dev page");
-            var url:URLRequest = new URLRequest("http://andromedus.com");
-            navigateToURL(url,"_blank");
-         };
+
          var showConnectionScreen:Function = function():void
          {
             connectionScreen = new connectionScreen_mc();
             projectCanvas.addChild(connectionScreen);
-            connectionScreen._PLAY_ONLINE_.addEventListener(MouseEvent.CLICK,connectToServer);
-            connectionScreen._PRACTICE_.addEventListener(MouseEvent.CLICK,connectionScreenToPracticeGame);
+
+            connectionScreen._PRACTICE_.addEventListener(MouseEvent.CLICK, connectionScreenToPracticeGame);
          };
          var removeConnectionScreen:Function = function():void
          {
-            connectionScreen._PLAY_ONLINE_.removeEventListener(MouseEvent.CLICK,connectToServer);
-            connectionScreen._PRACTICE_.removeEventListener(MouseEvent.CLICK,connectionScreenToPracticeGame);
+
+            connectionScreen._PRACTICE_.removeEventListener(MouseEvent.CLICK, connectionScreenToPracticeGame);
             projectCanvas.removeChild(connectionScreen);
             connectionScreen = null;
          };
@@ -377,7 +345,7 @@ package
                showCredits();
             };
             fade();
-            setTimeout(swap,500);
+            setTimeout(swap, 500);
          };
          creditsToMenu = function(e:MouseEvent):void
          {
@@ -388,20 +356,19 @@ package
                showMainMenu();
             };
             fade();
-            setTimeout(swap,500);
+            setTimeout(swap, 500);
          };
          var showCredits:Function = function():void
          {
-            tracker.trackEvent("Events","clicked credits");
+
             credits = new credits_mc();
             projectCanvas.addChild(credits);
-            credits.logo.addEventListener(MouseEvent.CLICK,gotoAndromedus);
-            credits._BACK_.addEventListener(MouseEvent.CLICK,creditsToMenu);
+
+            credits._BACK_.addEventListener(MouseEvent.CLICK, creditsToMenu);
          };
          var removeCredits:Function = function():void
          {
-            credits.logo.removeEventListener(MouseEvent.CLICK,gotoAndromedus);
-            credits._BACK_.removeEventListener(MouseEvent.CLICK,creditsToMenu);
+            credits._BACK_.removeEventListener(MouseEvent.CLICK, creditsToMenu);
             projectCanvas.removeChild(credits);
             credits = null;
          };
@@ -415,7 +382,7 @@ package
             };
             online = false;
             fade();
-            setTimeout(swap,500);
+            setTimeout(swap, 500);
          };
          var showLevelSelect:Function = function():void
          {
@@ -423,15 +390,15 @@ package
             projectCanvas.addChild(levelSelect);
             levelSelect.levelHolder.labels.mouseEnabled = false;
             levelSelect.levelHolder.labels.mouseChildren = false;
-            levelSelect._BACK_.addEventListener(MouseEvent.CLICK,levelSelectToMenu);
-            levelSelect._MORE_GAMES_.addEventListener(MouseEvent.CLICK,gotoSponsor);
-            levelSelect.levelHolder.addEventListener(MouseEvent.CLICK,levelSelectToGame);
+            levelSelect._BACK_.addEventListener(MouseEvent.CLICK, levelSelectToMenu);
+
+            levelSelect.levelHolder.addEventListener(MouseEvent.CLICK, levelSelectToGame);
          };
          var removeLevelSelect:Function = function():void
          {
-            levelSelect._BACK_.removeEventListener(MouseEvent.CLICK,levelSelectToMenu);
-            levelSelect.levelHolder.removeEventListener(MouseEvent.CLICK,levelSelectToGame);
-            levelSelect._MORE_GAMES_.removeEventListener(MouseEvent.CLICK,gotoSponsor);
+            levelSelect._BACK_.removeEventListener(MouseEvent.CLICK, levelSelectToMenu);
+            levelSelect.levelHolder.removeEventListener(MouseEvent.CLICK, levelSelectToGame);
+
             projectCanvas.removeChild(levelSelect);
             levelSelect = null;
          };
@@ -444,17 +411,17 @@ package
                showMainMenu();
             };
             fade();
-            setTimeout(swap,500);
+            setTimeout(swap, 500);
          };
-         levelSelectToGame = function(e:MouseEvent):void
+         function levelSelectToGame(e:MouseEvent):void
          {
             var swap:Function = null;
             swap = function():void
             {
                removeLevelSelect();
-               currentLevel = int(e.target.name.slice(1,3));
+               currentLevel = int(e.target.name.slice(1, 3));
                hintShown = false;
-               if(currentLevel < 21)
+               if (currentLevel < 21)
                {
                   initGame();
                }
@@ -464,21 +431,21 @@ package
                }
             };
             fade();
-            setTimeout(swap,500);
+            setTimeout(swap, 500);
          };
          var showChallenge:Function = function():void
          {
             challenge = new challenge_mc();
             projectCanvas.addChild(challenge);
-            challenge._START_.addEventListener(MouseEvent.CLICK,challengeToGame);
-            challenge._BACK_.addEventListener(MouseEvent.CLICK,challengeToLevelSelect);
-            challenge._SCORES_.addEventListener(MouseEvent.CLICK,showScores);
+            challenge._START_.addEventListener(MouseEvent.CLICK, challengeToGame);
+            challenge._BACK_.addEventListener(MouseEvent.CLICK, challengeToLevelSelect);
+            challenge._SCORES_.addEventListener(MouseEvent.CLICK, showScores);
          };
          var removeChallenge:Function = function():void
          {
-            challenge._START_.removeEventListener(MouseEvent.CLICK,challengeToGame);
-            challenge._BACK_.removeEventListener(MouseEvent.CLICK,challengeToLevelSelect);
-            challenge._SCORES_.removeEventListener(MouseEvent.CLICK,showScores);
+            challenge._START_.removeEventListener(MouseEvent.CLICK, challengeToGame);
+            challenge._BACK_.removeEventListener(MouseEvent.CLICK, challengeToLevelSelect);
+            challenge._SCORES_.removeEventListener(MouseEvent.CLICK, showScores);
             projectCanvas.removeChild(challenge);
             challenge = null;
          };
@@ -491,7 +458,7 @@ package
                initGame();
             };
             fade();
-            setTimeout(swap,500);
+            setTimeout(swap, 500);
          };
          challengeToLevelSelect = function(e:MouseEvent):void
          {
@@ -502,38 +469,37 @@ package
                showLevelSelect();
             };
             fade();
-            setTimeout(swap,500);
+            setTimeout(swap, 500);
          };
          showScores = function(e:MouseEvent):*
          {
             var o:Object = {
-               "n":[14,14,4,13,7,3,12,15,14,5,1,14,4,0,15,9],
-               "f":function(i:Number, s:String):String
+                  "n": [14, 14, 4, 13, 7, 3, 12, 15, 14, 5, 1, 14, 4, 0, 15, 9],
+                  "f": function(i:Number, s:String):String
                {
-                  if(s.length == 16)
+                  if (s.length == 16)
                   {
                      return s;
                   }
-                  return this.f(i + 1,s + this.n[i].toString(16));
+                  return this.f(i + 1, s + this.n[i].toString(16));
                }
             };
-            var boardID:String = o.f(0,"");
-            MochiScores.showLeaderboard({"boardID":boardID});
+            var boardID:String = o.f(0, "");
+
          };
          showLobby = function():void
          {
             removeConnectionScreen();
             lobby = new lobby_mc();
             projectCanvas.addChild(lobby);
-            updateLobby();
-            lobby._CREATE_GAME_.addEventListener(MouseEvent.CLICK,createRoom);
-            lobby._BACK_.addEventListener(MouseEvent.CLICK,lobbyToMenu);
-            lobby.roomList.addEventListener(ListEvent.ITEM_CLICK,lobbyToGameRoom);
+
+            lobby._BACK_.addEventListener(MouseEvent.CLICK, lobbyToMenu);
+            lobby.roomList.addEventListener(ListEvent.ITEM_CLICK, lobbyToGameRoom);
          };
          var removeLobby:Function = function():void
          {
-            lobby._CREATE_GAME_.removeEventListener(MouseEvent.CLICK,createRoom);
-            lobby._BACK_.removeEventListener(MouseEvent.CLICK,lobbyToMenu);
+
+            lobby._BACK_.removeEventListener(MouseEvent.CLICK, lobbyToMenu);
             projectCanvas.removeChild(lobby);
          };
          lobbyToMenu = function(e:MouseEvent):void
@@ -543,11 +509,11 @@ package
          };
          lobbyToGameRoom = function(e:ListEvent):void
          {
-            joinGameRoom(e.item.data);
+
             removeLobby();
-            if(myGame == true)
+            if (myGame == true)
             {
-               sfs.addEventListener(SFSEvent.USER_ENTER_ROOM,onOpponentEnterRoom);
+
             }
             else
             {
@@ -557,7 +523,7 @@ package
          var autoJoinGameRoom:Function = function():void
          {
             removeLobby();
-            sfs.addEventListener(SFSEvent.USER_ENTER_ROOM,onOpponentEnterRoom);
+
          };
          var fade:Function = function():void
          {
@@ -566,10 +532,10 @@ package
             var remove:Function = null;
             fadeOut = function():void
             {
-               TweenLite.to(blackScreen,0.5,{
-                  "alpha":1,
-                  "onComplete":remove
-               });
+               TweenLite.to(blackScreen, 0.5, {
+                     "alpha": 1,
+                     "onComplete": remove
+                  });
             };
             remove = function():void
             {
@@ -578,20 +544,20 @@ package
             };
             blackScreen = new blackScreen_mc();
             stage.addChild(blackScreen);
-            TweenLite.from(blackScreen,0.5,{
-               "alpha":0,
-               "onComplete":fadeOut
-            });
+            TweenLite.from(blackScreen, 0.5, {
+                  "alpha": 0,
+                  "onComplete": fadeOut
+               });
          };
          var initialiseSoundToggle:Function = function():void
          {
-            soundToggle.addEventListener(MouseEvent.MOUSE_OVER,soundOver);
-            soundToggle.addEventListener(MouseEvent.MOUSE_OUT,soundUp);
-            soundToggle.addEventListener(MouseEvent.MOUSE_DOWN,toggleSound);
+            soundToggle.addEventListener(MouseEvent.MOUSE_OVER, soundOver);
+            soundToggle.addEventListener(MouseEvent.MOUSE_OUT, soundUp);
+            soundToggle.addEventListener(MouseEvent.MOUSE_DOWN, toggleSound);
          };
          soundOver = function(e:MouseEvent):void
          {
-            if(Sound.on == true)
+            if (Sound.on == true)
             {
                soundToggle.gotoAndStop("onOver");
             }
@@ -602,7 +568,7 @@ package
          };
          soundUp = function(e:MouseEvent):void
          {
-            if(Sound.on == true)
+            if (Sound.on == true)
             {
                soundToggle.gotoAndStop("onUp");
             }
@@ -613,7 +579,7 @@ package
          };
          toggleSound = function(e:MouseEvent):void
          {
-            if(Sound.on == true)
+            if (Sound.on == true)
             {
                Sound.on = false;
                soundToggle.gotoAndStop("offOver");
@@ -626,13 +592,13 @@ package
          };
          var initialiseMusicToggle:Function = function():void
          {
-            musicToggle.addEventListener(MouseEvent.MOUSE_OVER,musicOver);
-            musicToggle.addEventListener(MouseEvent.MOUSE_OUT,musicUp);
-            musicToggle.addEventListener(MouseEvent.MOUSE_DOWN,toggleMusic);
+            musicToggle.addEventListener(MouseEvent.MOUSE_OVER, musicOver);
+            musicToggle.addEventListener(MouseEvent.MOUSE_OUT, musicUp);
+            musicToggle.addEventListener(MouseEvent.MOUSE_DOWN, toggleMusic);
          };
          musicOver = function(e:MouseEvent):void
          {
-            if(musicOn == true)
+            if (musicOn == true)
             {
                musicToggle.gotoAndStop("onOver");
             }
@@ -643,7 +609,7 @@ package
          };
          musicUp = function(e:MouseEvent):void
          {
-            if(musicOn == true)
+            if (musicOn == true)
             {
                musicToggle.gotoAndStop("onUp");
             }
@@ -654,7 +620,7 @@ package
          };
          toggleMusic = function(e:MouseEvent):void
          {
-            if(musicOn == true)
+            if (musicOn == true)
             {
                musicOn = false;
                musicToggle.gotoAndStop("offOver");
@@ -669,211 +635,10 @@ package
                musicChannel.soundTransform = musicTransform;
             }
          };
-         connectToServer = function(e:MouseEvent):void
-         {
-            online = true;
-            sfs = new SmartFox();
-            sfs.debug = false;
-            sfs.addEventListener(SFSEvent.CONNECTION,onConnection);
-            sfs.addEventListener(SFSEvent.CONNECTION_LOST,onConnectionLost);
-            sfs.addEventListener(SFSEvent.LOGIN,onLogin);
-            sfs.addEventListener(SFSEvent.LOGIN_ERROR,onLoginError);
-            sfs.addEventListener(SFSEvent.ROOM_JOIN,onRoomJoin);
-            sfs.addEventListener(SFSEvent.ROOM_JOIN_ERROR,onRoomJoinError);
-            sfs.addEventListener(SFSEvent.ROOM_ADD,onRoomAdded);
-            sfs.addEventListener(SFSEvent.ROOM_CREATION_ERROR,onRoomCreationError);
-            sfs.addEventListener(SFSEvent.ROOM_GROUP_SUBSCRIBE,onGroupSubscribed);
-            sfs.addEventListener(SFSEvent.ROOM_GROUP_SUBSCRIBE_ERROR,onGroupSubscribeError);
-            sfs.addEventListener(SFSEvent.USER_EXIT_ROOM,onUserExitRoom);
-            connectionScreen.outputText.appendText("SmartFox API: " + sfs.version + "\n");
-            sfs.connect("107.21.119.77",9933);
-         };
-         onConnection = function(evt:SFSEvent):void
-         {
-            if(evt.params.success)
-            {
-               connectionScreen.outputText.appendText("Connection Success!" + "\n");
-               sfs.send(new LoginRequest("","","billiards"));
-            }
-            else
-            {
-               connectionScreen.outputText.appendText("Connection Failure: " + evt.params.errorMessage + "\n");
-            }
-         };
-         onConnectionLost = function(evt:SFSEvent):void
-         {
-            connectionScreen.outputText.appendText("Connection was lost. Reason: " + evt.params.reason + "\n");
-         };
-         onLogin = function(evt:SFSEvent):void
-         {
-            connectionScreen.outputText.appendText("Login success: " + evt.params.user.name + "\n");
-            connectionScreen.outputText.appendText("Zone: " + sfs.currentZone + "\n");
-            sfs.send(new SubscribeRoomGroupRequest("9ball"));
-         };
-         onLoginError = function(evt:SFSEvent):void
-         {
-            connectionScreen.outputText.appendText("Login failed: " + evt.params.errorMessage + "\n");
-         };
-         onGroupSubscribed = function(evt:SFSEvent):void
-         {
-            trace("Group subscribed. The following rooms are now accessible: " + evt.params.newRooms);
-            sfs.send(new JoinRoomRequest("lobby"));
-         };
-         onGroupSubscribeError = function(evt:SFSEvent):void
-         {
-            trace("Group subscription failed: " + evt.params.errorMessage);
-         };
-         createRoom = function(e:MouseEvent):void
-         {
-            var settings:RoomSettings = new RoomSettings("new_room");
-            settings.maxUsers = 2;
-            settings.groupId = "9ball";
-            sfs.send(new CreateRoomRequest(settings,true));
-            trace("Attempting create room");
-            myGame = true;
-         };
-         onRoomAdded = function(evt:SFSEvent):void
-         {
-            trace("A new Room was added: " + evt.params.room);
-            updateLobby();
-         };
-         onRoomCreationError = function(evt:SFSEvent):void
-         {
-            trace("An error occurred while attempting to create the Room: " + evt.params.errorMessage);
-            myGame = false;
-         };
-         onRoomJoin = function(evt:SFSEvent):void
-         {
-            if(evt.params.room.name == "lobby")
-            {
-               connectionScreen.outputText.appendText("Joined room: " + evt.params.room + "\n");
-               setTimeout(showLobby,1000);
-            }
-            else
-            {
-               trace("Joined room: " + evt.params.room);
-               if(myGame == true)
-               {
-                  autoJoinGameRoom();
-               }
-            }
-         };
-         onRoomJoinError = function(evt:SFSEvent):void
-         {
-            trace("Join room error: " + evt.params.errorMessage);
-         };
-         var updateLobby:Function = function():void
-         {
-            var n:uint = 0;
-            lobby.roomList.removeAll();
-            for(var currentRoomList:Array = sfs.getRoomListFromGroup("9ball"); n < currentRoomList.length; )
-            {
-               lobby.roomList.addItem({
-                  "label":currentRoomList[n].name,
-                  "data":currentRoomList[n].id
-               });
-               n++;
-            }
-         };
-         var joinGameRoom:Function = function(roomId:*):void
-         {
-            sfs.send(new JoinRoomRequest(roomId));
-         };
-         onOpponentEnterRoom = function(evt:SFSEvent):void
-         {
-            var user:User = evt.params.user;
-            debug.textField.appendText(user.name + " entered the room\n");
-            initGame();
-         };
-         onUserExitRoom = function(evt:SFSEvent):void
-         {
-            var user:User = evt.params.user;
-            if(!user.isItMe)
-            {
-               debug.textField.appendText(user.name + " exited the room\n");
-            }
-         };
-         var sendShot:Function = function():void
-         {
-            var dataObj:ISFSObject = new SFSObject();
-            dataObj.putInt("ax",Maths.fixNumber(ballArray[0].velocity.x * 10000));
-            dataObj.putInt("ay",Maths.fixNumber(ballArray[0].velocity.y * 10000));
-            dataObj.putInt("as",Maths.fixNumber(ballArray[0].screw * 10000));
-            dataObj.putInt("ae",Maths.fixNumber(ballArray[0].english * 10000));
-            sfs.send(new ObjectMessageRequest(dataObj));
-            debug.textField.appendText("sent: " + String(ballArray[0].velocity.x) + ", " + String(ballArray[0].velocity.y) + "\n");
-         };
-         var sendCueBallPlacement:Function = function():void
-         {
-            var dataObj:ISFSObject = new SFSObject();
-            dataObj.putInt("px",Maths.fixNumber(ballArray[0].position.x * 10000));
-            dataObj.putInt("py",Maths.fixNumber(ballArray[0].position.y * 10000));
-            sfs.send(new ObjectMessageRequest(dataObj));
-            debug.textField.appendText("sent cb pos: " + String(ballArray[0].position.x) + ", " + String(ballArray[0].position.y) + "\n");
-         };
-         var sendVerification:Function = function(positions:int):void
-         {
-            var dataObj:ISFSObject = new SFSObject();
-            dataObj.putInt("ve",positions);
-            sfs.send(new ObjectMessageRequest(dataObj));
-            debug.textField.appendText("sent verification: " + String(positions) + "\n");
-         };
-         var sendCoinToss:Function = function():void
-         {
-            var dataObj:ISFSObject = new SFSObject();
-            var coinTossResult:uint = 0;
-            if(myTurn == true)
-            {
-               coinTossResult = 1;
-            }
-            dataObj.putInt("c",coinTossResult);
-            sfs.send(new ObjectMessageRequest(dataObj));
-            debug.textField.appendText("coin toss sent: my turn = " + String(myTurn) + "\n");
-         };
-         receiveData = function(evt:SFSEvent):void
-         {
-            var cueBallPositionX:Number = NaN;
-            var cueBallPositionY:Number = NaN;
-            var cueBallVelocityX:Number = NaN;
-            var cueBallVelocityY:Number = NaN;
-            var cueBallScrew:Number = NaN;
-            var cueBallEnglish:Number = NaN;
-            var dataObj:ISFSObject = evt.params.message as SFSObject;
-            if(dataObj.containsKey("px") && dataObj.containsKey("py"))
-            {
-               cueBallPositionX = Maths.fixNumber(dataObj.getInt("px") / 10000);
-               cueBallPositionY = Maths.fixNumber(dataObj.getInt("py") / 10000);
-               placeYourCueBall(cueBallPositionX,cueBallPositionY);
-               debug.textField.appendText("cb pos received: " + String(cueBallPositionX) + ", " + String(cueBallPositionY) + "\n");
-            }
-            if(dataObj.containsKey("ax") && dataObj.containsKey("ay") && dataObj.containsKey("as") && dataObj.containsKey("ae"))
-            {
-               cueBallVelocityX = Maths.fixNumber(dataObj.getInt("ax") / 10000);
-               cueBallVelocityY = Maths.fixNumber(dataObj.getInt("ay") / 10000);
-               cueBallScrew = Maths.fixNumber(dataObj.getInt("as") / 10000);
-               cueBallEnglish = Maths.fixNumber(dataObj.getInt("ae") / 10000);
-               debug.textField.appendText("shot received: " + String(cueBallVelocityX) + ", " + String(cueBallVelocityY) + "\n");
-               strikeYourBall(cueBallVelocityX,cueBallVelocityY,cueBallScrew,cueBallEnglish);
-            }
-            if(dataObj.containsKey("ve"))
-            {
-               debug.textField.appendText("verification received: " + String(dataObj.getInt("ve")) + "\n");
-               verificationReceived = true;
-               receivedVerificationValue = dataObj.getInt("ve");
-            }
-            if(dataObj.containsKey("c"))
-            {
-               if(dataObj.getInt("c") == 0)
-               {
-                  myTurn = true;
-               }
-               receivedCoinToss = true;
-               debug.textField.appendText("coin toss received: my turn = " + String(myTurn) + "\n");
-            }
-         };
+
          var initGame:Function = function():void
          {
-            tracker.trackEvent("Events","played level " + String(currentLevel));
+
             resetGameVars();
             soundToggle.x = 48;
             soundToggle.y = 538;
@@ -892,7 +657,7 @@ package
             countdownWasRunning = false;
             addGUI();
             updateGUI();
-            if(gui.hint.visible == false || gameMode != 0)
+            if (gui.hint.visible == false || gameMode != 0)
             {
                setupPaused = false;
                initGame2();
@@ -904,37 +669,37 @@ package
          };
          var initGame2:Function = function():void
          {
-            if(currentLevel == 1)
+            if (currentLevel == 1)
             {
                gui.strikeHint.visible = true;
-               TweenLite.from(gui.strikeHint,2,{
-                  "alpha":0,
-                  "delay":5
-               });
+               TweenLite.from(gui.strikeHint, 2, {
+                     "alpha": 0,
+                     "delay": 5
+                  });
                gui.strikeHint.x = ballArray[0].position.x * physScale + 380;
                gui.strikeHint.y = ballArray[0].position.y * physScale + 310;
             }
-            if(currentLevel == 2)
+            if (currentLevel == 2)
             {
                gui.adjustHint.visible = true;
-               TweenLite.from(gui.adjustHint,2,{
-                  "alpha":0,
-                  "delay":5
-               });
+               TweenLite.from(gui.adjustHint, 2, {
+                     "alpha": 0,
+                     "delay": 5
+                  });
                gui.adjustHint.x = ballArray[0].position.x * physScale + 360;
                gui.adjustHint.y = ballArray[0].position.y * physScale + 320;
             }
             initMouseListener();
             initKeyboardListener();
             resetShotVars();
-            Dispatcher.GetInstance().addEventListener(CustomEvent.EVENT,onContact);
-            if(message != "")
+            Dispatcher.GetInstance().addEventListener(CustomEvent.EVENT, onContact);
+            if (message != "")
             {
                showMessage();
             }
-            if(online == true)
+            if (online == true)
             {
-               sfs.addEventListener(SFSEvent.OBJECT_MESSAGE,receiveData);
+
                coinToss();
             }
             else
@@ -943,17 +708,17 @@ package
                playGame();
             }
             musicVolume = 1;
-            stage.addEventListener(Event.ENTER_FRAME,fadeMusicOut);
+            stage.addEventListener(Event.ENTER_FRAME, fadeMusicOut);
          };
          fadeMusicOut = function(e:Event):*
          {
             musicVolume -= 0.0025;
-            if(musicVolume <= 0)
+            if (musicVolume <= 0)
             {
                musicVolume = 0;
-               stage.removeEventListener(Event.ENTER_FRAME,fadeMusicOut);
+               stage.removeEventListener(Event.ENTER_FRAME, fadeMusicOut);
             }
-            if(musicOn == true)
+            if (musicOn == true)
             {
                musicTransform.volume = musicVolume;
                musicChannel.soundTransform = musicTransform;
@@ -962,12 +727,12 @@ package
          fadeMusicIn = function(e:Event):*
          {
             musicVolume += 0.01;
-            if(musicVolume >= 1)
+            if (musicVolume >= 1)
             {
                musicVolume = 1;
-               stage.removeEventListener(Event.ENTER_FRAME,fadeMusicIn);
+               stage.removeEventListener(Event.ENTER_FRAME, fadeMusicIn);
             }
-            if(musicOn == true)
+            if (musicOn == true)
             {
                musicTransform.volume = musicVolume;
                musicChannel.soundTransform = musicTransform;
@@ -975,9 +740,9 @@ package
          };
          var coinToss:Function = function():void
          {
-            if(myGame == true)
+            if (myGame == true)
             {
-               if(Math.random() < 0.5)
+               if (Math.random() < 0.5)
                {
                   myTurn = true;
                   gui.myTurn.gotoAndStop(1);
@@ -986,21 +751,21 @@ package
                {
                   gui.myTurn.gotoAndStop(2);
                }
-               sendCoinToss();
+
                playGame();
             }
             else
             {
                debug.textField.appendText("waiting for coin toss result ...\n");
-               addEventListener(Event.ENTER_FRAME,onCoinTossReceived);
+               addEventListener(Event.ENTER_FRAME, onCoinTossReceived);
             }
          };
          onCoinTossReceived = function(e:Event):void
          {
-            if(receivedCoinToss == true)
+            if (receivedCoinToss == true)
             {
-               removeEventListener(Event.ENTER_FRAME,onCoinTossReceived);
-               if(myTurn == true)
+               removeEventListener(Event.ENTER_FRAME, onCoinTossReceived);
+               if (myTurn == true)
                {
                   gui.myTurn.gotoAndStop(1);
                }
@@ -1014,7 +779,7 @@ package
          var initPhysics:Function = function():void
          {
             var _loc2_:Object = null;
-            phys = new billiardPhysics(ballArray,lineArray,vertexArray,pocketArray,0);
+            phys = new billiardPhysics(ballArray, lineArray, vertexArray, pocketArray, 0);
             phys.frictionFast = frictionFast;
             phys.frictionSlow = frictionSlow;
             phys.frictionSpeedThreshold = frictionSpeedThreshold;
@@ -1025,7 +790,7 @@ package
             phys.cushionRestitution = cushionRestitution;
             phys.ballRestitution = ballRestitution;
             ballArraySim = new Array();
-            for(var _loc1_:uint = 0; _loc1_ < ballArray.length; _loc1_++)
+            for (var _loc1_:uint = 0; _loc1_ < ballArray.length; _loc1_++)
             {
                _loc2_ = new Object();
                _loc2_.radius = ballRadius;
@@ -1034,7 +799,7 @@ package
                ballArraySim.push(_loc2_);
             }
             ballArraySim2 = new Array();
-            for(_loc1_ = 0; _loc1_ < ballArray.length; _loc1_++)
+            for (_loc1_ = 0; _loc1_ < ballArray.length; _loc1_++)
             {
                _loc2_ = new Object();
                _loc2_.radius = ballRadius;
@@ -1043,7 +808,7 @@ package
                ballArraySim2.push(_loc2_);
             }
             resetBallArraySim2();
-            preSim2 = new billiardPhysics(ballArraySim2,lineArray,vertexArray,pocketArray,2);
+            preSim2 = new billiardPhysics(ballArraySim2, lineArray, vertexArray, pocketArray, 2);
             preSim2.frictionFast = frictionFast;
             preSim2.frictionSlow = frictionSlow;
             preSim2.frictionSpeedThreshold = frictionSpeedThreshold;
@@ -1057,42 +822,42 @@ package
          var resetBallArraySim:Function = function():void
          {
             var ball:Object = null;
-            for(var n:uint = 0; n < ballArray.length; n++)
+            for (var n:uint = 0; n < ballArray.length; n++)
             {
                ball = ballArraySim[n];
                ball.position = ballArray[n].position;
-               ball.velocity = new Vector2D(0,0);
+               ball.velocity = new Vector2D(0, 0);
                ball.lastCollisionObject = null;
                ball.active = ballArray[n].active;
                ball.firstContact = false;
                ball.contactArray = new Array();
-               if(n == 0)
+               if (n == 0)
                {
                   ball.screw = 0;
                   ball.english = 0;
                   ball.ySpin = 0;
-                  ball.deltaScrew = new Vector2D(0,0);
+                  ball.deltaScrew = new Vector2D(0, 0);
                }
             }
          };
          var resetBallArraySim2:Function = function():void
          {
             var ball:Object = null;
-            for(var n:uint = 0; n < ballArray.length; n++)
+            for (var n:uint = 0; n < ballArray.length; n++)
             {
                ball = ballArraySim2[n];
                ball.position = ballArray[n].position;
-               ball.velocity = new Vector2D(0,0);
+               ball.velocity = new Vector2D(0, 0);
                ball.lastCollisionObject = null;
                ball.active = ballArray[n].active;
                ball.firstContact = false;
                ball.contactArray = new Array();
                ball.ySpin = 0;
-               if(n == 0)
+               if (n == 0)
                {
                   ball.screw = 0;
                   ball.english = 0;
-                  ball.deltaScrew = new Vector2D(0,0);
+                  ball.deltaScrew = new Vector2D(0, 0);
                }
             }
          };
@@ -1120,14 +885,14 @@ package
             gameCanvas.addChild(guideCanvas);
             guideCanvas.mouseEnabled = false;
             guideCanvas.mouseChildren = false;
-            if(requiredBallOn == true || bonusBallOn == true)
+            if (requiredBallOn == true || bonusBallOn == true)
             {
                trace("here");
                marker = new marker_mc();
                gameCanvas.addChild(marker);
                marker.width = 10 * ballRadius * physScale;
                marker.height = 10 * ballRadius * physScale;
-               if(showNextTarget == true)
+               if (showNextTarget == true)
                {
                   marker2 = new marker_mc();
                   gameCanvas.addChild(marker2);
@@ -1144,122 +909,121 @@ package
          };
          var setupBalls:Function = function():void
          {
-            var _loc2_:uint = 0;
-            var _loc3_:Object = null;
-            var _loc4_:int = 0;
-            var _loc5_:Ball = null;
-            var _loc6_:* = undefined;
-            var _loc1_:Array = setBallPositions();
-            numBalls = _loc1_.length;
-            for(_loc2_ = 0; _loc2_ < numBalls; _loc2_++)
+            var logic_ball:Object = null;
+            var color:int = 0;
+            var ball:Ball = null;
+            var ball_pos_arr:Array = setBallPositions();
+            numBalls = ball_pos_arr.length;
+            for (var i:uint = 0; i < numBalls; i++)
             {
-               _loc3_ = new Object();
-               _loc3_.radius = ballRadius;
-               _loc3_.position = new Vector2D(_loc1_[_loc2_].x,_loc1_[_loc2_].y);
-               _loc3_.velocity = new Vector2D(0,0);
-               _loc3_.lastCollisionObject = null;
-               _loc3_.id = _loc2_;
-               if(_loc2_ != 0)
+               logic_ball = new Object();
+               logic_ball.radius = ballRadius;
+               logic_ball.position = new Vector2D(ball_pos_arr[i].x, ball_pos_arr[i].y);
+               logic_ball.velocity = new Vector2D(0, 0);
+               logic_ball.lastCollisionObject = null;
+               logic_ball.id = i;
+               if (i != 0)
                {
-                  if(_loc3_.position.y >= 16000)
+                  if (logic_ball.position.y >= 16000)
                   {
-                     _loc3_.active = false;
+                     logic_ball.active = false;
                   }
                   else
                   {
-                     _loc3_.active = true;
+                     logic_ball.active = true;
                   }
                }
                else
                {
-                  _loc3_.active = true;
+                  logic_ball.active = true;
                }
-               _loc3_.firstContact = false;
-               _loc3_.contactArray = new Array();
-               _loc3_.type = "real";
-               if(_loc2_ == 0)
+               logic_ball.firstContact = false;
+               logic_ball.contactArray = new Array();
+               logic_ball.type = "real";
+               if (i == 0)
                {
-                  _loc3_.screw = 0;
-                  _loc3_.english = 0;
-                  _loc3_.deltaScrew = new Vector2D(0,0);
+                  logic_ball.screw = 0;
+                  logic_ball.english = 0;
+                  logic_ball.deltaScrew = new Vector2D(0, 0);
                }
-               _loc3_.grip = 1;
-               _loc3_.ySpin = 0;
-               switch(_loc2_)
+               logic_ball.grip = 1;
+               logic_ball.ySpin = 0;
+               switch (i)
                {
                   case 0:
-                     _loc4_ = 16777215;
+                     color = 16777215;
                      break;
                   case 1:
-                     _loc4_ = 16776960;
+                     color = 16776960;
                      break;
                   case 2:
-                     _loc4_ = 187;
+                     color = 187;
                      break;
                   case 3:
-                     _loc4_ = 16711680;
+                     color = 16711680;
                      break;
                   case 4:
-                     _loc4_ = 12255419;
+                     color = 12255419;
                      break;
                   case 5:
-                     _loc4_ = 16737792;
+                     color = 16737792;
                      break;
                   case 6:
-                     _loc4_ = 47872;
+                     color = 47872;
                      break;
                   case 7:
-                     _loc4_ = 11149824;
+                     color = 11149824;
                      break;
                   case 8:
-                     _loc4_ = 0;
+                     color = 0;
                      break;
                   case 9:
-                     _loc4_ = 16776960;
+                     color = 16776960;
                      break;
                   case 10:
-                     _loc4_ = 187;
+                     color = 187;
                      break;
                   case 11:
-                     _loc4_ = 16711680;
+                     color = 16711680;
                      break;
                   case 12:
-                     _loc4_ = 12255419;
+                     color = 12255419;
                      break;
                   case 13:
-                     _loc4_ = 16737792;
+                     color = 16737792;
                      break;
                   case 14:
-                     _loc4_ = 47872;
+                     color = 47872;
                      break;
                   case 15:
-                     _loc4_ = 11149824;
+                     color = 11149824;
                      break;
                }
-               _loc5_ = new Ball(_loc3_.radius * physScale,_loc4_,_loc2_);
-               _loc3_.mc = _loc5_;
-               if(_loc3_.active == true)
+               ball = new Ball(logic_ball.radius * physScale, color, i);
+               logic_ball.mc = ball;
+               if (logic_ball.active == true)
                {
-                  ballCanvas.addChild(_loc3_.mc);
-                  _loc3_.mc.x = _loc3_.position.x * physScale;
-                  _loc3_.mc.y = _loc3_.position.y * physScale;
-                  _loc3_.shadow1 = new shadow_mc();
-                  ballShadowCanvas.addChild(_loc3_.shadow1);
-                  _loc3_.shadow1.x = _loc3_.mc.x;
-                  _loc3_.shadow1.y = _loc3_.mc.y;
-                  _loc3_.shadow1.width = _loc3_.radius * physScale;
-                  _loc3_.shadow1.height = _loc3_.radius * physScale;
-                  _loc3_.shadow1.alpha = 0.4;
+                  ballCanvas.addChild(logic_ball.mc);
+                  logic_ball.mc.x = logic_ball.position.x * physScale;
+                  logic_ball.mc.y = logic_ball.position.y * physScale;
+                  logic_ball.shadow1 = new shadow_mc();
+                  ballShadowCanvas.addChild(logic_ball.shadow1);
+                  logic_ball.shadow1.x = logic_ball.mc.x;
+                  logic_ball.shadow1.y = logic_ball.mc.y;
+                  logic_ball.shadow1.width = logic_ball.radius * physScale;
+                  logic_ball.shadow1.height = logic_ball.radius * physScale;
+                  logic_ball.shadow1.alpha = 0.4;
                }
-               _loc3_.lowerCanvas = ballCanvasLower;
-               ballArray.push(_loc3_);
+               logic_ball.lowerCanvas = ballCanvasLower;
+               ballArray.push(logic_ball);
             }
-            for(_loc2_ = 0; _loc2_ < numBalls; _loc2_++)
+            var obj:Object=null;
+            for (i = 0; i < numBalls; i++)
             {
-               _loc6_ = ballArray[_loc2_];
-               if(_loc6_.id != 0 && _loc6_.active == true)
+               obj = ballArray[i];
+               if (obj.id != 0 && obj.active == true)
                {
-                  ++ballsRemaining;
+                  ++ ballsRemaining;
                }
             }
             renderScreen();
@@ -1272,143 +1036,143 @@ package
             var _loc8_:Vector2D = null;
             var _loc1_:uint = 600;
             _loc4_ = new Object();
-            _loc4_.position = new Vector2D(-50 * _loc1_ - pocketRadius / 2,-25 * _loc1_ - pocketRadius / 4);
-            _loc4_.dropPosition = new Vector2D(-51 * _loc1_ - pocketRadius / 2,-26 * _loc1_ - pocketRadius / 4);
+            _loc4_.position = new Vector2D(-50 * _loc1_ - pocketRadius / 2, -25 * _loc1_ - pocketRadius / 4);
+            _loc4_.dropPosition = new Vector2D(-51 * _loc1_ - pocketRadius / 2, -26 * _loc1_ - pocketRadius / 4);
             pocketArray.push(_loc4_);
             _loc4_ = new Object();
-            _loc4_.position = new Vector2D(0 * _loc1_,-25 * _loc1_ - pocketRadius);
-            _loc4_.dropPosition = new Vector2D(0 * _loc1_,-25.5 * _loc1_ - pocketRadius);
+            _loc4_.position = new Vector2D(0 * _loc1_, -25 * _loc1_ - pocketRadius);
+            _loc4_.dropPosition = new Vector2D(0 * _loc1_, -25.5 * _loc1_ - pocketRadius);
             pocketArray.push(_loc4_);
             _loc4_ = new Object();
-            _loc4_.position = new Vector2D(50 * _loc1_ + pocketRadius / 2,-25 * _loc1_ - pocketRadius / 4);
-            _loc4_.dropPosition = new Vector2D(51 * _loc1_ + pocketRadius / 2,-26 * _loc1_ - pocketRadius / 4);
+            _loc4_.position = new Vector2D(50 * _loc1_ + pocketRadius / 2, -25 * _loc1_ - pocketRadius / 4);
+            _loc4_.dropPosition = new Vector2D(51 * _loc1_ + pocketRadius / 2, -26 * _loc1_ - pocketRadius / 4);
             pocketArray.push(_loc4_);
             _loc4_ = new Object();
-            _loc4_.position = new Vector2D(-50 * _loc1_ - pocketRadius / 2,25 * _loc1_ + pocketRadius / 4);
-            _loc4_.dropPosition = new Vector2D(-51 * _loc1_ - pocketRadius / 2,26 * _loc1_ + pocketRadius / 4);
+            _loc4_.position = new Vector2D(-50 * _loc1_ - pocketRadius / 2, 25 * _loc1_ + pocketRadius / 4);
+            _loc4_.dropPosition = new Vector2D(-51 * _loc1_ - pocketRadius / 2, 26 * _loc1_ + pocketRadius / 4);
             pocketArray.push(_loc4_);
             _loc4_ = new Object();
-            _loc4_.position = new Vector2D(0 * _loc1_,25 * _loc1_ + pocketRadius);
-            _loc4_.dropPosition = new Vector2D(0 * _loc1_,25.5 * _loc1_ + pocketRadius);
+            _loc4_.position = new Vector2D(0 * _loc1_, 25 * _loc1_ + pocketRadius);
+            _loc4_.dropPosition = new Vector2D(0 * _loc1_, 25.5 * _loc1_ + pocketRadius);
             pocketArray.push(_loc4_);
             _loc4_ = new Object();
-            _loc4_.position = new Vector2D(50 * _loc1_ + pocketRadius / 2,25 * _loc1_ + pocketRadius / 4);
-            _loc4_.dropPosition = new Vector2D(51 * _loc1_ + pocketRadius / 2,26 * _loc1_ + pocketRadius / 4);
+            _loc4_.position = new Vector2D(50 * _loc1_ + pocketRadius / 2, 25 * _loc1_ + pocketRadius / 4);
+            _loc4_.dropPosition = new Vector2D(51 * _loc1_ + pocketRadius / 2, 26 * _loc1_ + pocketRadius / 4);
             pocketArray.push(_loc4_);
             var _loc5_:Number = 4;
             var _loc6_:Number = 2;
             _loc2_ = new Object();
-            _loc2_.p1 = new Vector2D(-50 * _loc1_,-(25 + _loc5_) * _loc1_);
-            _loc2_.p2 = new Vector2D(-(50 - _loc5_) * _loc1_,-25 * _loc1_);
+            _loc2_.p1 = new Vector2D(-50 * _loc1_, -(25 + _loc5_) * _loc1_);
+            _loc2_.p2 = new Vector2D(-(50 - _loc5_) * _loc1_, -25 * _loc1_);
             lineArray.push(_loc2_);
             _loc3_ = new Object();
-            _loc3_.position = new Vector2D(_loc2_.p2.x,_loc2_.p2.y);
+            _loc3_.position = new Vector2D(_loc2_.p2.x, _loc2_.p2.y);
             vertexArray.push(_loc3_);
             _loc2_ = new Object();
-            _loc2_.p1 = new Vector2D(-(50 - _loc5_) * _loc1_,-25 * _loc1_);
-            _loc2_.p2 = new Vector2D(-_loc5_ * _loc1_,-25 * _loc1_);
+            _loc2_.p1 = new Vector2D(-(50 - _loc5_) * _loc1_, -25 * _loc1_);
+            _loc2_.p2 = new Vector2D(-_loc5_ * _loc1_, -25 * _loc1_);
             lineArray.push(_loc2_);
             _loc3_ = new Object();
-            _loc3_.position = new Vector2D(_loc2_.p2.x,_loc2_.p2.y);
+            _loc3_.position = new Vector2D(_loc2_.p2.x, _loc2_.p2.y);
             vertexArray.push(_loc3_);
             _loc2_ = new Object();
-            _loc2_.p1 = new Vector2D(-_loc5_ * _loc1_,-25 * _loc1_);
-            _loc2_.p2 = new Vector2D(-_loc6_ * _loc1_,-(25 + _loc5_) * _loc1_);
+            _loc2_.p1 = new Vector2D(-_loc5_ * _loc1_, -25 * _loc1_);
+            _loc2_.p2 = new Vector2D(-_loc6_ * _loc1_, -(25 + _loc5_) * _loc1_);
             lineArray.push(_loc2_);
             _loc2_ = new Object();
-            _loc2_.p1 = new Vector2D(_loc6_ * _loc1_,-(25 + _loc5_) * _loc1_);
-            _loc2_.p2 = new Vector2D(_loc5_ * _loc1_,-25 * _loc1_);
+            _loc2_.p1 = new Vector2D(_loc6_ * _loc1_, -(25 + _loc5_) * _loc1_);
+            _loc2_.p2 = new Vector2D(_loc5_ * _loc1_, -25 * _loc1_);
             lineArray.push(_loc2_);
             _loc3_ = new Object();
-            _loc3_.position = new Vector2D(_loc2_.p2.x,_loc2_.p2.y);
+            _loc3_.position = new Vector2D(_loc2_.p2.x, _loc2_.p2.y);
             vertexArray.push(_loc3_);
             _loc2_ = new Object();
-            _loc2_.p1 = new Vector2D(_loc5_ * _loc1_,-25 * _loc1_);
-            _loc2_.p2 = new Vector2D((50 - _loc5_) * _loc1_,-25 * _loc1_);
+            _loc2_.p1 = new Vector2D(_loc5_ * _loc1_, -25 * _loc1_);
+            _loc2_.p2 = new Vector2D((50 - _loc5_) * _loc1_, -25 * _loc1_);
             lineArray.push(_loc2_);
             _loc3_ = new Object();
-            _loc3_.position = new Vector2D(_loc2_.p2.x,_loc2_.p2.y);
+            _loc3_.position = new Vector2D(_loc2_.p2.x, _loc2_.p2.y);
             vertexArray.push(_loc3_);
             _loc2_ = new Object();
-            _loc2_.p1 = new Vector2D((50 - _loc5_) * _loc1_,-25 * _loc1_);
-            _loc2_.p2 = new Vector2D(50 * _loc1_,-(25 + _loc5_) * _loc1_);
+            _loc2_.p1 = new Vector2D((50 - _loc5_) * _loc1_, -25 * _loc1_);
+            _loc2_.p2 = new Vector2D(50 * _loc1_, -(25 + _loc5_) * _loc1_);
             lineArray.push(_loc2_);
             _loc2_ = new Object();
-            _loc2_.p1 = new Vector2D((50 + _loc5_) * _loc1_,-25 * _loc1_);
-            _loc2_.p2 = new Vector2D(50 * _loc1_,-(25 - _loc5_) * _loc1_);
+            _loc2_.p1 = new Vector2D((50 + _loc5_) * _loc1_, -25 * _loc1_);
+            _loc2_.p2 = new Vector2D(50 * _loc1_, -(25 - _loc5_) * _loc1_);
             lineArray.push(_loc2_);
             _loc3_ = new Object();
-            _loc3_.position = new Vector2D(_loc2_.p2.x,_loc2_.p2.y);
+            _loc3_.position = new Vector2D(_loc2_.p2.x, _loc2_.p2.y);
             vertexArray.push(_loc3_);
             _loc2_ = new Object();
-            _loc2_.p1 = new Vector2D(50 * _loc1_,-(25 - _loc5_) * _loc1_);
-            _loc2_.p2 = new Vector2D(50 * _loc1_,(25 - _loc5_) * _loc1_);
+            _loc2_.p1 = new Vector2D(50 * _loc1_, -(25 - _loc5_) * _loc1_);
+            _loc2_.p2 = new Vector2D(50 * _loc1_, (25 - _loc5_) * _loc1_);
             lineArray.push(_loc2_);
             _loc3_ = new Object();
-            _loc3_.position = new Vector2D(_loc2_.p2.x,_loc2_.p2.y);
+            _loc3_.position = new Vector2D(_loc2_.p2.x, _loc2_.p2.y);
             vertexArray.push(_loc3_);
             _loc2_ = new Object();
-            _loc2_.p1 = new Vector2D(50 * _loc1_,(25 - _loc5_) * _loc1_);
-            _loc2_.p2 = new Vector2D((50 + _loc5_) * _loc1_,25 * _loc1_);
+            _loc2_.p1 = new Vector2D(50 * _loc1_, (25 - _loc5_) * _loc1_);
+            _loc2_.p2 = new Vector2D((50 + _loc5_) * _loc1_, 25 * _loc1_);
             lineArray.push(_loc2_);
             _loc2_ = new Object();
-            _loc2_.p1 = new Vector2D(50 * _loc1_,(25 + _loc5_) * _loc1_);
-            _loc2_.p2 = new Vector2D((50 - _loc5_) * _loc1_,25 * _loc1_);
+            _loc2_.p1 = new Vector2D(50 * _loc1_, (25 + _loc5_) * _loc1_);
+            _loc2_.p2 = new Vector2D((50 - _loc5_) * _loc1_, 25 * _loc1_);
             lineArray.push(_loc2_);
             _loc3_ = new Object();
-            _loc3_.position = new Vector2D(_loc2_.p2.x,_loc2_.p2.y);
+            _loc3_.position = new Vector2D(_loc2_.p2.x, _loc2_.p2.y);
             vertexArray.push(_loc3_);
             _loc2_ = new Object();
-            _loc2_.p1 = new Vector2D((50 - _loc5_) * _loc1_,25 * _loc1_);
-            _loc2_.p2 = new Vector2D(_loc5_ * _loc1_,25 * _loc1_);
+            _loc2_.p1 = new Vector2D((50 - _loc5_) * _loc1_, 25 * _loc1_);
+            _loc2_.p2 = new Vector2D(_loc5_ * _loc1_, 25 * _loc1_);
             lineArray.push(_loc2_);
             _loc3_ = new Object();
-            _loc3_.position = new Vector2D(_loc2_.p2.x,_loc2_.p2.y);
+            _loc3_.position = new Vector2D(_loc2_.p2.x, _loc2_.p2.y);
             vertexArray.push(_loc3_);
             _loc2_ = new Object();
-            _loc2_.p1 = new Vector2D(_loc5_ * _loc1_,25 * _loc1_);
-            _loc2_.p2 = new Vector2D(_loc6_ * _loc1_,(25 + _loc5_) * _loc1_);
+            _loc2_.p1 = new Vector2D(_loc5_ * _loc1_, 25 * _loc1_);
+            _loc2_.p2 = new Vector2D(_loc6_ * _loc1_, (25 + _loc5_) * _loc1_);
             lineArray.push(_loc2_);
             _loc2_ = new Object();
-            _loc2_.p1 = new Vector2D(-_loc6_ * _loc1_,(25 + _loc5_) * _loc1_);
-            _loc2_.p2 = new Vector2D(-_loc5_ * _loc1_,25 * _loc1_);
+            _loc2_.p1 = new Vector2D(-_loc6_ * _loc1_, (25 + _loc5_) * _loc1_);
+            _loc2_.p2 = new Vector2D(-_loc5_ * _loc1_, 25 * _loc1_);
             lineArray.push(_loc2_);
             _loc3_ = new Object();
-            _loc3_.position = new Vector2D(_loc2_.p2.x,_loc2_.p2.y);
+            _loc3_.position = new Vector2D(_loc2_.p2.x, _loc2_.p2.y);
             vertexArray.push(_loc3_);
             _loc2_ = new Object();
-            _loc2_.p1 = new Vector2D(-_loc5_ * _loc1_,25 * _loc1_);
-            _loc2_.p2 = new Vector2D(-(50 - _loc5_) * _loc1_,25 * _loc1_);
+            _loc2_.p1 = new Vector2D(-_loc5_ * _loc1_, 25 * _loc1_);
+            _loc2_.p2 = new Vector2D(-(50 - _loc5_) * _loc1_, 25 * _loc1_);
             lineArray.push(_loc2_);
             _loc3_ = new Object();
-            _loc3_.position = new Vector2D(_loc2_.p2.x,_loc2_.p2.y);
+            _loc3_.position = new Vector2D(_loc2_.p2.x, _loc2_.p2.y);
             vertexArray.push(_loc3_);
             _loc2_ = new Object();
-            _loc2_.p1 = new Vector2D(-(50 - _loc5_) * _loc1_,25 * _loc1_);
-            _loc2_.p2 = new Vector2D(-50 * _loc1_,(25 + _loc5_) * _loc1_);
+            _loc2_.p1 = new Vector2D(-(50 - _loc5_) * _loc1_, 25 * _loc1_);
+            _loc2_.p2 = new Vector2D(-50 * _loc1_, (25 + _loc5_) * _loc1_);
             lineArray.push(_loc2_);
             _loc2_ = new Object();
-            _loc2_.p1 = new Vector2D(-(50 + _loc5_) * _loc1_,25 * _loc1_);
-            _loc2_.p2 = new Vector2D(-50 * _loc1_,(25 - _loc5_) * _loc1_);
+            _loc2_.p1 = new Vector2D(-(50 + _loc5_) * _loc1_, 25 * _loc1_);
+            _loc2_.p2 = new Vector2D(-50 * _loc1_, (25 - _loc5_) * _loc1_);
             lineArray.push(_loc2_);
             _loc3_ = new Object();
-            _loc3_.position = new Vector2D(_loc2_.p2.x,_loc2_.p2.y);
+            _loc3_.position = new Vector2D(_loc2_.p2.x, _loc2_.p2.y);
             vertexArray.push(_loc3_);
             _loc2_ = new Object();
-            _loc2_.p1 = new Vector2D(-50 * _loc1_,(25 - _loc5_) * _loc1_);
-            _loc2_.p2 = new Vector2D(-50 * _loc1_,-(25 - _loc5_) * _loc1_);
+            _loc2_.p1 = new Vector2D(-50 * _loc1_, (25 - _loc5_) * _loc1_);
+            _loc2_.p2 = new Vector2D(-50 * _loc1_, -(25 - _loc5_) * _loc1_);
             lineArray.push(_loc2_);
             _loc3_ = new Object();
-            _loc3_.position = new Vector2D(_loc2_.p2.x,_loc2_.p2.y);
+            _loc3_.position = new Vector2D(_loc2_.p2.x, _loc2_.p2.y);
             vertexArray.push(_loc3_);
             _loc2_ = new Object();
-            _loc2_.p1 = new Vector2D(-50 * _loc1_,-(25 - _loc5_) * _loc1_);
-            _loc2_.p2 = new Vector2D(-(50 + _loc5_) * _loc1_,-25 * _loc1_);
+            _loc2_.p1 = new Vector2D(-50 * _loc1_, -(25 - _loc5_) * _loc1_);
+            _loc2_.p2 = new Vector2D(-(50 + _loc5_) * _loc1_, -25 * _loc1_);
             lineArray.push(_loc2_);
-            for(var _loc7_:uint = 0; _loc7_ < lineArray.length; _loc7_++)
+            for (var _loc7_:uint = 0; _loc7_ < lineArray.length; _loc7_++)
             {
                _loc2_ = lineArray[_loc7_];
-               _loc2_.direction = new Vector2D(_loc2_.p2.x - _loc2_.p1.x,_loc2_.p2.y - _loc2_.p1.y).normalize();
+               _loc2_.direction = new Vector2D(_loc2_.p2.x - _loc2_.p1.x, _loc2_.p2.y - _loc2_.p1.y).normalize();
                _loc2_.normal = _loc2_.direction.getLeftNormal();
                _loc8_ = _loc2_.normal.times(ballRadius);
                _loc2_.p3 = _loc2_.p1.plus(_loc8_);
@@ -1441,36 +1205,36 @@ package
          var addGUI:Function = function():void
          {
             gui = new gui_mc();
-            projectCanvas.addChildAt(gui,projectCanvas.getChildIndex(projectCanvas.getChildByName("cueCanvas")));
+            projectCanvas.addChildAt(gui, projectCanvas.getChildIndex(projectCanvas.getChildByName("cueCanvas")));
             gui.strikeHint.visible = false;
             gui.adjustHint.visible = false;
-            gui._QUIT_.addEventListener(MouseEvent.CLICK,quit);
-            gui._RESTART_.addEventListener(MouseEvent.CLICK,reRack);
-            gui._HINT_.addEventListener(MouseEvent.CLICK,showHint);
-            gui._WALKTHROUGH_.addEventListener(MouseEvent.CLICK,gotoWalkthrough);
-            gui.sponsorLogo.addEventListener(MouseEvent.CLICK,gotoSponsor);
+            gui._QUIT_.addEventListener(MouseEvent.CLICK, quit);
+            gui._RESTART_.addEventListener(MouseEvent.CLICK, reRack);
+            gui._HINT_.addEventListener(MouseEvent.CLICK, showHint);
+            gui._WALKTHROUGH_.addEventListener(MouseEvent.CLICK, gotoWalkthrough);
+
             gui.message.text = "";
             gui.hint.visible = false;
-            if(gameMode == 0)
+            if (gameMode == 0)
             {
-               if(hintOn == true && hintShown == false)
+               if (hintOn == true && hintShown == false)
                {
                   showHint();
                   gui.hint.next.visible = false;
                }
             }
             gui.power.mask.height *= 0.4;
-            if(shotsRemainingOn == true)
+            if (shotsRemainingOn == true)
             {
                gui.topLeftLabel.text = "shots \nremaining";
                gui.topLeftValue.text = String(shotsRemaining);
             }
-            if(timeRemainingOn == true)
+            if (timeRemainingOn == true)
             {
                gui.topLeftLabel.text = "time \nremaining";
                gui.topLeftValue.text = String(timeRemaining);
             }
-            if(timeRemainingOn == false && shotsRemainingOn == false)
+            if (timeRemainingOn == false && shotsRemainingOn == false)
             {
                gui.topLeftLabel.text = "";
                gui.topLeftValue.text = "";
@@ -1478,21 +1242,21 @@ package
          };
          gotoWalkthrough = function(e:MouseEvent):void
          {
-            tracker.trackEvent("Events","clicked walkthrough");
+
             var url:URLRequest = new URLRequest("http://zayplay.com/page/billiard-blitz-pool-skool-walkthrough.html?utm_source=" + thisURL + "&utm_medium=flashgame&utm_campaign=Billard-Blitz-Pool-Skool");
-            navigateToURL(url,"_blank");
+            navigateToURL(url, "_blank");
          };
          showHint = function(e:MouseEvent = null):void
          {
-            if(preventQuit == false)
+            if (preventQuit == false)
             {
-               if(pauseCountdown == false)
+               if (pauseCountdown == false)
                {
                   countdownWasRunning = true;
                   pauseCountdown = true;
                }
                hintShown = true;
-               if(hintOn == true)
+               if (hintOn == true)
                {
                   gui.hint.content.gotoAndStop(currentLevel);
                }
@@ -1502,24 +1266,24 @@ package
                }
                gui.hint.visible = true;
                gui.hint.next.visible = true;
-               gui.hint.close.addEventListener(MouseEvent.CLICK,hideHint);
-               gui.hint.next.addEventListener(MouseEvent.CLICK,nextHint);
-               if(gameRunning == true)
+               gui.hint.close.addEventListener(MouseEvent.CLICK, hideHint);
+               gui.hint.next.addEventListener(MouseEvent.CLICK, nextHint);
+               if (gameRunning == true)
                {
                   gameRunning = false;
                   gameRunningStopped = true;
                }
-               if(cueCanvas.visible == true)
+               if (cueCanvas.visible == true)
                {
                   cueCanvas.visible = false;
                   cueCanvasHidden = true;
                }
-               if(tuning.visible == true)
+               if (tuning.visible == true)
                {
                   tuning.visible = false;
                   tuningHidden = true;
                }
-               if(guideCanvas.visible == true)
+               if (guideCanvas.visible == true)
                {
                   guideCanvas.visible = false;
                   guideCanvasHidden = true;
@@ -1530,7 +1294,7 @@ package
          };
          nextHint = function(e:MouseEvent):void
          {
-            if(gui.hint.content.currentFrame < gui.hint.content.totalFrames)
+            if (gui.hint.content.currentFrame < gui.hint.content.totalFrames)
             {
                gui.hint.content.nextFrame();
             }
@@ -1541,36 +1305,36 @@ package
          };
          hideHint = function(e:MouseEvent):void
          {
-            if(countdownWasRunning == true)
+            if (countdownWasRunning == true)
             {
                pauseCountdown = false;
             }
             gui.hint.visible = false;
-            gui.hint.close.removeEventListener(MouseEvent.CLICK,hideHint);
-            gui.hint.next.removeEventListener(MouseEvent.CLICK,nextHint);
-            if(gameRunningStopped == true)
+            gui.hint.close.removeEventListener(MouseEvent.CLICK, hideHint);
+            gui.hint.next.removeEventListener(MouseEvent.CLICK, nextHint);
+            if (gameRunningStopped == true)
             {
                gameRunning = true;
                gameRunningStopped = false;
             }
-            if(cueCanvasHidden == true)
+            if (cueCanvasHidden == true)
             {
                cueCanvas.visible = true;
                cueCanvasHidden = false;
             }
-            if(tuningHidden == true)
+            if (tuningHidden == true)
             {
                tuning.visible = true;
                tuningHidden = false;
             }
-            if(guideCanvasHidden == true)
+            if (guideCanvasHidden == true)
             {
                guideCanvas.visible = true;
                guideCanvasHidden = false;
             }
             ballCanvas.visible = true;
             ballShadowCanvas.visible = true;
-            if(setupPaused == true)
+            if (setupPaused == true)
             {
                setupPaused = false;
                initGame2();
@@ -1582,7 +1346,7 @@ package
             bonus = 0;
             myTurn = false;
             shotNum = 0;
-            aimDirectionVector = new Vector2D(0,0);
+            aimDirectionVector = new Vector2D(0, 0);
             gameRunningStopped = false;
             cueCanvasHidden = false;
             guideCanvasHidden = false;
@@ -1594,13 +1358,13 @@ package
          };
          var initMouseListener:Function = function():void
          {
-            stage.addEventListener(MouseEvent.MOUSE_DOWN,onMouseDown);
-            stage.addEventListener(MouseEvent.MOUSE_UP,onMouseUp);
+            stage.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
+            stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
          };
          var disableMouseListener:Function = function():void
          {
-            stage.removeEventListener(MouseEvent.MOUSE_DOWN,onMouseDown);
-            stage.removeEventListener(MouseEvent.MOUSE_UP,onMouseUp);
+            stage.removeEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
+            stage.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
          };
          onMouseDown = function(e:MouseEvent):void
          {
@@ -1615,110 +1379,110 @@ package
          };
          var initKeyboardListener:Function = function():void
          {
-            stage.addEventListener(KeyboardEvent.KEY_DOWN,onKeyDown);
-            stage.addEventListener(KeyboardEvent.KEY_UP,onKeyUp);
+            stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+            stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
          };
          var disableKeyboardListener:Function = function():void
          {
-            stage.removeEventListener(KeyboardEvent.KEY_DOWN,onKeyDown);
-            stage.removeEventListener(KeyboardEvent.KEY_UP,onKeyUp);
+            stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+            stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyUp);
          };
          onKeyDown = function(e:KeyboardEvent):void
          {
-            if(e.keyCode == Keyboard.LEFT)
+            if (e.keyCode == Keyboard.LEFT)
             {
                leftKeyDown = true;
             }
-            if(e.keyCode == Keyboard.RIGHT)
+            if (e.keyCode == Keyboard.RIGHT)
             {
                rightKeyDown = true;
             }
-            if(e.keyCode == Keyboard.UP)
+            if (e.keyCode == Keyboard.UP)
             {
                upKeyDown = true;
             }
-            if(e.keyCode == Keyboard.DOWN)
+            if (e.keyCode == Keyboard.DOWN)
             {
                downKeyDown = true;
             }
-            if(e.keyCode == Keyboard.SHIFT)
+            if (e.keyCode == Keyboard.SHIFT)
             {
                shiftKeyDown = true;
             }
-            if(e.keyCode == 65)
+            if (e.keyCode == 65)
             {
                leftKey2Down = true;
             }
-            if(e.keyCode == 68)
+            if (e.keyCode == 68)
             {
                rightKey2Down = true;
             }
-            if(e.keyCode == 87)
+            if (e.keyCode == 87)
             {
                upKey2Down = true;
             }
-            if(e.keyCode == 83)
+            if (e.keyCode == 83)
             {
                downKey2Down = true;
             }
-            if(e.keyCode == Keyboard.SPACE)
+            if (e.keyCode == Keyboard.SPACE)
             {
                spaceKeyDown = true;
             }
-            if(e.keyCode == 114 || e.keyCode == 82)
+            if (e.keyCode == 114 || e.keyCode == 82)
             {
                rKeyDown = true;
             }
-            if(e.keyCode == 82)
+            if (e.keyCode == 82)
             {
                reRack(null);
             }
          };
          onKeyUp = function(e:KeyboardEvent):void
          {
-            if(e.keyCode == Keyboard.LEFT)
+            if (e.keyCode == Keyboard.LEFT)
             {
                leftKeyDown = false;
                aimSpeed = 0.01;
             }
-            if(e.keyCode == Keyboard.RIGHT)
+            if (e.keyCode == Keyboard.RIGHT)
             {
                rightKeyDown = false;
                aimSpeed = 0.01;
             }
-            if(e.keyCode == Keyboard.UP)
+            if (e.keyCode == Keyboard.UP)
             {
                upKeyDown = false;
             }
-            if(e.keyCode == Keyboard.DOWN)
+            if (e.keyCode == Keyboard.DOWN)
             {
                downKeyDown = false;
             }
-            if(e.keyCode == Keyboard.SHIFT)
+            if (e.keyCode == Keyboard.SHIFT)
             {
                shiftKeyDown = false;
             }
-            if(e.keyCode == 65)
+            if (e.keyCode == 65)
             {
                leftKey2Down = false;
             }
-            if(e.keyCode == 68)
+            if (e.keyCode == 68)
             {
                rightKey2Down = false;
             }
-            if(e.keyCode == 87)
+            if (e.keyCode == 87)
             {
                upKey2Down = false;
             }
-            if(e.keyCode == 83)
+            if (e.keyCode == 83)
             {
                downKey2Down = false;
             }
-            if(e.keyCode == Keyboard.SPACE)
+            if (e.keyCode == Keyboard.SPACE)
             {
                spaceKeyDown = false;
             }
-            if(e.keyCode == 114 || e.keyCode == 82)
+            if (e.keyCode == 114 || e.keyCode == 82)
             {
                rKeyDown = false;
             }
@@ -1735,83 +1499,83 @@ package
             _loc4_.velocity = _loc2_.ballVelocity;
             _loc4_.collisionType = _loc2_.collisionType;
             _loc4_.screw = _loc3_.screw;
-            if(_loc2_.collisionType == "ball")
+            if (_loc2_.collisionType == "ball")
             {
                _loc4_.target = _loc2_.target;
                _loc4_.targetVelocity = _loc2_.targetVelocity;
                _loc4_.deltaScrew = _loc2_.deltaScrew;
             }
-            if(_loc3_.type == "real")
+            if (_loc3_.type == "real")
             {
-               if(_loc2_.collisionType == "ball")
+               if (_loc2_.collisionType == "ball")
                {
                   _loc3_.contactArray.push(_loc4_);
                   _loc5_ = _loc4_.velocity.minus(_loc4_.targetVelocity).magnitude;
                   _loc6_ = _loc5_ / 6000;
-                  if(_loc6_ > 1)
+                  if (_loc6_ > 1)
                   {
                      _loc6_ = 1;
                   }
-                  Sound.Play("ball",_loc6_);
+                  Sound.Play("ball", _loc6_);
                }
-               if(_loc2_.collisionType == "line" || _loc2_.collisionType == "vertex")
+               if (_loc2_.collisionType == "line" || _loc2_.collisionType == "vertex")
                {
                   _loc3_.contactArray.push(_loc4_);
                   _loc5_ = _loc2_.normalVelocity.magnitude;
                   _loc6_ = _loc5_ / 3000;
-                  if(_loc6_ > 2)
+                  if (_loc6_ > 2)
                   {
                      _loc6_ = 2;
                   }
-                  Sound.Play("cushion",_loc6_);
+                  Sound.Play("cushion", _loc6_);
                }
-               if(_loc2_.collisionType == "pocket")
+               if (_loc2_.collisionType == "pocket")
                {
                   playPocketSound(_loc2_);
                   playPocketAnimation(_loc2_);
-                  if(gameMode == 0)
+                  if (gameMode == 0)
                   {
                      awardBonuses(_loc2_);
                   }
-                  if(_loc3_.id == 0)
+                  if (_loc3_.id == 0)
                   {
                      cueBallInHand = true;
                   }
                   else
                   {
-                     --ballsRemaining;
+                     -- ballsRemaining;
                   }
-                  if(bonusBallOn == true || requiredBallOn == true)
+                  if (bonusBallOn == true || requiredBallOn == true)
                   {
                      findNextTargets();
                   }
                }
             }
-            if(_loc2_.collisionType == "ball" && _loc3_.firstContact == false)
+            if (_loc2_.collisionType == "ball" && _loc3_.firstContact == false)
             {
                _loc3_.firstContact = true;
-               if(_loc3_.type == "sim" || _loc3_.type == "sim2")
+               if (_loc3_.type == "sim" || _loc3_.type == "sim2")
                {
                   _loc3_.contactArray.push(_loc4_);
                }
             }
-            if(_loc2_.collisionType == "line" && _loc3_.firstContact == false)
+            if (_loc2_.collisionType == "line" && _loc3_.firstContact == false)
             {
-               if(_loc3_.type == "sim" || _loc3_.type == "sim2")
+               if (_loc3_.type == "sim" || _loc3_.type == "sim2")
                {
                   _loc3_.contactArray.push(_loc4_);
                }
             }
-            if(_loc2_.collisionType == "vertex" && _loc3_.firstContact == false)
+            if (_loc2_.collisionType == "vertex" && _loc3_.firstContact == false)
             {
-               if(_loc3_.type == "sim" || _loc3_.type == "sim2")
+               if (_loc3_.type == "sim" || _loc3_.type == "sim2")
                {
                   _loc3_.contactArray.push(_loc4_);
                }
             }
-            if(_loc2_.collisionType == "pocket" && _loc3_.firstContact == false)
+            if (_loc2_.collisionType == "pocket" && _loc3_.firstContact == false)
             {
-               if(_loc3_.type == "sim" || _loc3_.type == "sim2")
+               if (_loc3_.type == "sim" || _loc3_.type == "sim2")
                {
                   _loc3_.firstContact = true;
                   _loc3_.contactArray.push(_loc4_);
@@ -1822,15 +1586,15 @@ package
          {
             var closingSpeed:* = collisionData.speed;
             var volume:Number = closingSpeed / 5000;
-            if(volume > 1.5)
+            if (volume > 1.5)
             {
                volume = 1.5;
             }
-            if(volume < 0.3)
+            if (volume < 0.3)
             {
                volume = 0.3;
             }
-            Sound.Play("pocket",volume);
+            Sound.Play("pocket", volume);
          };
          var awardBonuses:Function = function(collisionData:*):void
          {
@@ -1850,21 +1614,21 @@ package
             var ball:* = collisionData.ball;
             pocket = collisionData.target;
             var closingSpeed:* = collisionData.speed;
-            var effect:* = new ParticleExplosion("star_mc",15,0.5,0,0.01,0,1);
+            var effect:* = new ParticleExplosion("star_mc", 15, 0.5, 0, 0.01, 0, 1);
             gameCanvas.addChild(effect);
             effect.x = pocket.position.x * physScale;
             effect.y = pocket.position.y * physScale;
             effect.Start();
             bonusDisplay = new bonusDisplay_mc();
             projectCanvas.addChild(bonusDisplay);
-            if(ball.id == 0)
+            if (ball.id == 0)
             {
                bonusDisplay.textField.text = "Scratch";
                fouled = true;
             }
-            if(requiredBallOn == true && fouled == false)
+            if (requiredBallOn == true && fouled == false)
             {
-               if(ball.id != currentTarget)
+               if (ball.id != currentTarget)
                {
                   bonusDisplay.textField.text = "Wrong Ball";
                   fouled = true;
@@ -1875,15 +1639,15 @@ package
             var lastBall:Object = null;
             var kiss:Boolean = false;
             var combo:Boolean = false;
-            if(ball.id != 0)
+            if (ball.id != 0)
             {
                trace("num contacts: " + ball.contactArray.length);
-               for(n = 0; n < ball.contactArray.length; n++)
+               for (n = 0; n < ball.contactArray.length; n++)
                {
                   collisionObject = ball.contactArray[n];
-                  if(collisionObject.collisionType == "ball")
+                  if (collisionObject.collisionType == "ball")
                   {
-                     if(!firstBall)
+                     if (!firstBall)
                      {
                         firstBall = collisionObject.target;
                      }
@@ -1891,99 +1655,99 @@ package
                      trace("last ball: " + lastBall);
                   }
                }
-               if(lastBall.id != 0)
+               if (lastBall.id != 0)
                {
                   clean = false;
-                  if(firstBall.id == 0)
+                  if (firstBall.id == 0)
                   {
                      kiss = true;
                   }
-                  if(firstBall.id != 0)
+                  if (firstBall.id != 0)
                   {
                      combo = true;
                   }
                }
                cannon = false;
-               if(clean == true)
+               if (clean == true)
                {
                   firstBall = null;
-                  for(n = 0; n < ballArray[0].contactArray.length; n++)
+                  for (n = 0; n < ballArray[0].contactArray.length; n++)
                   {
                      collisionObject = ballArray[0].contactArray[n];
-                     if(collisionObject.collisionType == "ball")
+                     if (collisionObject.collisionType == "ball")
                      {
-                        if(!firstBall)
+                        if (!firstBall)
                         {
                            firstBall = collisionObject.target;
                         }
                      }
                   }
-                  if(firstBall != ball)
+                  if (firstBall != ball)
                   {
                      cannon = true;
                   }
                }
             }
-            if(kiss == true && fouled == false)
+            if (kiss == true && fouled == false)
             {
                bonusDisplay.textField.text = "Kiss Shot \n200";
                bonus += 200;
-               if(kissesRequired > 0)
+               if (kissesRequired > 0)
                {
-                  --kissesRequired;
+                  -- kissesRequired;
                }
             }
-            if(combo == true && fouled == false)
+            if (combo == true && fouled == false)
             {
                bonusDisplay.textField.text = "Combo Shot \n300";
                bonus += 300;
-               if(combosRequired > 0)
+               if (combosRequired > 0)
                {
-                  --combosRequired;
+                  -- combosRequired;
                }
             }
-            if(cannon == true && fouled == false)
+            if (cannon == true && fouled == false)
             {
                bonusDisplay.textField.text = "Carom Shot \n400";
                bonus += 400;
-               if(cannonsRequired > 0)
+               if (cannonsRequired > 0)
                {
-                  --cannonsRequired;
+                  -- cannonsRequired;
                }
             }
-            if(fouled == false && clean == true && cannon == false)
+            if (fouled == false && clean == true && cannon == false)
             {
                bonusDisplay.textField.text = "Pot \n100";
                bonus += 100;
             }
             bonusDisplay.x = pocket.position.x * physScale + stageWidth / 2 - 30;
             bonusDisplay.y = pocket.position.y * physScale - 20 + stageHeight / 2;
-            TweenLite.to(bonusDisplay,4,{
-               "alpha":0,
-               "y":pocket.position.y * physScale - 60 + stageHeight / 2,
-               "onComplete":removeBonus
-            });
+            TweenLite.to(bonusDisplay, 4, {
+                  "alpha": 0,
+                  "y": pocket.position.y * physScale - 60 + stageHeight / 2,
+                  "onComplete": removeBonus
+               });
             var kick:* = false;
-            if(fouled == false)
+            if (fouled == false)
             {
                cushionContact = false;
-               for(n = 0; n < ballArray[0].contactArray.length; n++)
+               for (n = 0; n < ballArray[0].contactArray.length; n++)
                {
                   collisionObject = ballArray[0].contactArray[n];
-                  if(collisionObject.collisionType == "line" || collisionObject.collisionType == "vertex")
+                  if (collisionObject.collisionType == "line" || collisionObject.collisionType == "vertex")
                   {
                      cushionContact = true;
                   }
-                  if(collisionObject.collisionType == "ball" && collisionObject.target == ball)
+                  if (collisionObject.collisionType == "ball" && collisionObject.target == ball)
                   {
-                     if(cushionContact == true)
+                     if (cushionContact == true)
                      {
                         kick = true;
                      }
                   }
                }
             }
-            if(kick == true)
+            if (kick == true)
             {
                var showBonus2:Function = function():void
                {
@@ -1996,39 +1760,39 @@ package
                   bonusDisplay2 = new bonusDisplay_mc();
                   projectCanvas.addChild(bonusDisplay2);
                   bonusDisplay2.textField.text = "Kick Shot \n100";
-                  if(kicksRequired > 0)
+                  if (kicksRequired > 0)
                   {
-                     --kicksRequired;
+                     -- kicksRequired;
                   }
                   bonusDisplay2.x = pocket.position.x * physScale + stageWidth / 2 - 30;
                   bonusDisplay2.y = pocket.position.y * physScale - 20 + stageHeight / 2;
-                  TweenLite.to(bonusDisplay2,4,{
-                     "alpha":0,
-                     "y":pocket.position.y * physScale - 60 + stageHeight / 2,
-                     "onComplete":removeBonus2
-                  });
+                  TweenLite.to(bonusDisplay2, 4, {
+                        "alpha": 0,
+                        "y": pocket.position.y * physScale - 60 + stageHeight / 2,
+                        "onComplete": removeBonus2
+                     });
                };
                delay += 1000;
-               setTimeout(showBonus2,delay);
+               setTimeout(showBonus2, delay);
                bonus += 100;
             }
             var bank:* = false;
-            if(fouled == false)
+            if (fouled == false)
             {
-               for(n = 0; n < ball.contactArray.length; n++)
+               for (n = 0; n < ball.contactArray.length; n++)
                {
                   collisionObject = ball.contactArray[n];
-                  if(collisionObject.collisionType == "line" || collisionObject.collisionType == "vertex")
+                  if (collisionObject.collisionType == "line" || collisionObject.collisionType == "vertex")
                   {
                      distSq = (collisionObject.position.x - pocket.position.x) * (collisionObject.position.x - pocket.position.x) + (collisionObject.position.y - pocket.position.y) * (collisionObject.position.y - pocket.position.y);
-                     if(distSq >= 25000 * 25000)
+                     if (distSq >= 25000 * 25000)
                      {
                         bank = true;
                      }
                   }
                }
             }
-            if(bank == true)
+            if (bank == true)
             {
                var showBonus3:Function = function():void
                {
@@ -2041,25 +1805,25 @@ package
                   bonusDisplay3 = new bonusDisplay_mc();
                   projectCanvas.addChild(bonusDisplay3);
                   bonusDisplay3.textField.text = "Bank Shot \n100";
-                  if(banksRequired > 0)
+                  if (banksRequired > 0)
                   {
-                     --banksRequired;
+                     -- banksRequired;
                   }
                   bonusDisplay3.x = pocket.position.x * physScale + stageWidth / 2 - 30;
                   bonusDisplay3.y = pocket.position.y * physScale - 20 + stageHeight / 2;
-                  TweenLite.to(bonusDisplay3,4,{
-                     "alpha":0,
-                     "y":pocket.position.y * physScale - 60 + stageHeight / 2,
-                     "onComplete":removeBonus3
-                  });
+                  TweenLite.to(bonusDisplay3, 4, {
+                        "alpha": 0,
+                        "y": pocket.position.y * physScale - 60 + stageHeight / 2,
+                        "onComplete": removeBonus3
+                     });
                };
                delay += 1000;
-               setTimeout(showBonus3,delay);
+               setTimeout(showBonus3, delay);
                bonus += 100;
             }
-            if(requiredBallOn == true || bonusBallOn == true)
+            if (requiredBallOn == true || bonusBallOn == true)
             {
-               if(ball.id == currentTarget)
+               if (ball.id == currentTarget)
                {
                   var showBonus4:Function = function():void
                   {
@@ -2074,15 +1838,15 @@ package
                      bonusDisplay4.textField.text = "Bonus Ball \n500";
                      bonusDisplay4.x = pocket.position.x * physScale + stageWidth / 2 - 30;
                      bonusDisplay4.y = pocket.position.y * physScale - 20 + stageHeight / 2;
-                     TweenLite.to(bonusDisplay4,4,{
-                        "alpha":0,
-                        "y":pocket.position.y * physScale - 60 + stageHeight / 2,
-                        "onComplete":removeBonus4
-                     });
+                     TweenLite.to(bonusDisplay4, 4, {
+                           "alpha": 0,
+                           "y": pocket.position.y * physScale - 60 + stageHeight / 2,
+                           "onComplete": removeBonus4
+                        });
                   };
                   bonus += 500;
                   delay += 1000;
-                  setTimeout(showBonus4,delay);
+                  setTimeout(showBonus4, delay);
                }
             }
             updateGUI();
@@ -2106,7 +1870,7 @@ package
             };
             removeMC = function(ball:*):void
             {
-               if(ball.id != 0)
+               if (ball.id != 0)
                {
                   ball.mc.parent.removeChild(ball.mc);
                }
@@ -2121,13 +1885,13 @@ package
                      pocketTweenComplete = true;
                   };
                   ball.mc.visible = false;
-                  setTimeout(showCueBall,1000);
+                  setTimeout(showCueBall, 1000);
                }
             };
             ball = collisionData.ball;
             var pocket:* = collisionData.target;
             var closingSpeed:* = collisionData.speed;
-            if(ball.id != 0)
+            if (ball.id != 0)
             {
                ball.shadow1.parent.removeChild(ball.shadow1);
                ball.shadow1 = null;
@@ -2138,47 +1902,47 @@ package
                pocketTweenComplete = false;
             }
             var tweenSpeed:* = 0.1;
-            if(closingSpeed < 5000)
+            if (closingSpeed < 5000)
             {
                tweenSpeed = 0.2;
             }
-            if(closingSpeed < 3000)
+            if (closingSpeed < 3000)
             {
                tweenSpeed = 0.3;
             }
-            if(closingSpeed < 2000)
+            if (closingSpeed < 2000)
             {
                tweenSpeed = 0.4;
             }
-            if(closingSpeed < 1000)
+            if (closingSpeed < 1000)
             {
                tweenSpeed = 0.5;
             }
             ball.mc.scaleX = 0.9;
             ball.mc.scaleY = 0.9;
-            TweenLite.to(ball.mc,tweenSpeed,{
-               "x":pocket.dropPosition.x * physScale,
-               "y":pocket.dropPosition.y * physScale,
-               "onComplete":swapCanvas
-            });
-            TweenLite.to(ball.mc,tweenSpeed * 1.2,{
-               "delay":tweenSpeed,
-               "x":0.8 * pocket.position.x * physScale,
-               "y":0.8 * pocket.position.y * physScale,
-               "ease":Quad.easeIn,
-               "onComplete":removeMC,
-               "onCompleteParams":[ball]
-            });
+            TweenLite.to(ball.mc, tweenSpeed, {
+                  "x": pocket.dropPosition.x * physScale,
+                  "y": pocket.dropPosition.y * physScale,
+                  "onComplete": swapCanvas
+               });
+            TweenLite.to(ball.mc, tweenSpeed * 1.2, {
+                  "delay": tweenSpeed,
+                  "x": 0.8 * pocket.position.x * physScale,
+                  "y": 0.8 * pocket.position.y * physScale,
+                  "ease": Quad.easeIn,
+                  "onComplete": removeMC,
+                  "onCompleteParams": [ball]
+               });
          };
          var renderScreen:Function = function():void
          {
             var ball:Object = null;
             var distSq:Number = NaN;
             var shadowWidth:Number = NaN;
-            for(var n:uint = 0; n < ballArray.length; n++)
+            for (var n:uint = 0; n < ballArray.length; n++)
             {
                ball = ballArray[n];
-               if(ball.active == true)
+               if (ball.active == true)
                {
                   ball.mc.x = ball.position.x * physScale;
                   ball.mc.y = ball.position.y * physScale;
@@ -2188,10 +1952,10 @@ package
                   ball.shadow1.width = shadowRadius;
                   ball.shadow1.height = shadowRadius;
                   ball.shadow1.width = shadowWidth;
-                  ball.shadow1.rotation = 180 / Math.PI * Math.atan2(ball.mc.y,ball.mc.x);
+                  ball.shadow1.rotation = 180 / Math.PI * Math.atan2(ball.mc.y, ball.mc.x);
                   ball.shadow1.x = ball.mc.x + 0.7 * ball.radius * physScale * (ball.mc.x / 300);
                   ball.shadow1.y = ball.mc.y + 0.7 * ball.radius * physScale * (ball.mc.y / 150);
-                  ball.mc.updateRotation(ball.velocity.x * physScale * ball.grip,ball.velocity.y * physScale * ball.grip,ball.ySpin);
+                  ball.mc.updateRotation(ball.velocity.x * physScale * ball.grip, ball.velocity.y * physScale * ball.grip, ball.ySpin);
                }
             }
          };
@@ -2199,13 +1963,13 @@ package
          {
             resetShotVars();
             gameRunning = true;
-            stage.addEventListener(Event.ENTER_FRAME,gameLoop);
+            stage.addEventListener(Event.ENTER_FRAME, gameLoop);
          };
          gameLoop = function(e:Event):void
          {
-            if(gameRunning == true)
+            if (gameRunning == true)
             {
-               if(myTurn == true)
+               if (myTurn == true)
                {
                   placeMyCueBall();
                   setSpin();
@@ -2220,7 +1984,7 @@ package
                {
                   checkYourShotOver();
                }
-               if(shotRunning == true)
+               if (shotRunning == true)
                {
                   phys.updatePhysics();
                   renderScreen();
@@ -2229,7 +1993,7 @@ package
          };
          var switchTurns:Function = function():void
          {
-            if(myTurn == true)
+            if (myTurn == true)
             {
                myTurn = false;
                gui.myTurn.gotoAndStop(2);
@@ -2261,7 +2025,7 @@ package
             cueCanvas.rotation = 0;
             cueCanvas.x = stageWidth / 2 - 30 + ballArray[0].position.x * physScale;
             cueCanvas.y = stageHeight / 2 + ballArray[0].position.y * physScale;
-            for(var b:uint = 0; b < ballArray.length; b++)
+            for (var b:uint = 0; b < ballArray.length; b++)
             {
                ballArray[b].lastCollisionObject = null;
                ballArray[b].firstContact = false;
@@ -2273,12 +2037,12 @@ package
             tuningRight = false;
             preventAim = false;
             findNextTargets();
-            if(myTurn == true)
+            if (myTurn == true)
             {
                initWidget();
                cueCanvas.alpha = 1;
                power = gui.power.mask.height * 20;
-               if(cueBallInHand == true)
+               if (cueBallInHand == true)
                {
                   ballArray[0].active = true;
                   guideCanvas.visible = false;
@@ -2292,21 +2056,21 @@ package
                else
                {
                   cueCanvas.visible = true;
-                  cueCanvas.rotation = 180 + 180 / Math.PI * Math.atan2(ballArray[0].position.y,ballArray[0].position.x);
+                  cueCanvas.rotation = 180 + 180 / Math.PI * Math.atan2(ballArray[0].position.y, ballArray[0].position.x);
                   compX = Math.cos(cueCanvas.rotation * Math.PI / 180);
                   compY = Math.sin(cueCanvas.rotation * Math.PI / 180);
-                  aimDirectionVector = new Vector2D(compX,compY).normalize();
+                  aimDirectionVector = new Vector2D(compX, compY).normalize();
                   updateAimingGuide();
                }
-               if(requiredBallOn == true || bonusBallOn == true)
+               if (requiredBallOn == true || bonusBallOn == true)
                {
                   marker.visible = true;
                   marker.gotoAndPlay(1);
                   marker.x = ballArray[currentTarget].position.x * physScale;
                   marker.y = ballArray[currentTarget].position.y * physScale;
-                  if(showNextTarget == true)
+                  if (showNextTarget == true)
                   {
-                     if(ballsRemaining > 1)
+                     if (ballsRemaining > 1)
                      {
                         marker2.visible = true;
                         marker2.gotoAndPlay(110);
@@ -2326,31 +2090,31 @@ package
          {
             var n:uint = 0;
             var ball:* = undefined;
-            if(bonusBallOn == true || requiredBallOn == true)
+            if (bonusBallOn == true || requiredBallOn == true)
             {
                currentTarget = 15;
-               for(n = 1; n < ballArray.length; n++)
+               for (n = 1; n < ballArray.length; n++)
                {
                   ball = ballArray[n];
-                  if(ball.active == true)
+                  if (ball.active == true)
                   {
-                     if(ball.id < currentTarget)
+                     if (ball.id < currentTarget)
                      {
                         currentTarget = ball.id;
                      }
                   }
                }
-               if(showNextTarget == true)
+               if (showNextTarget == true)
                {
-                  if(ballsRemaining > 1)
+                  if (ballsRemaining > 1)
                   {
                      nextTarget = 15;
-                     for(n = 1; n < ballArray.length; n++)
+                     for (n = 1; n < ballArray.length; n++)
                      {
                         ball = ballArray[n];
-                        if(ball.active == true)
+                        if (ball.active == true)
                         {
-                           if(ball.id > currentTarget && ball.id < nextTarget)
+                           if (ball.id > currentTarget && ball.id < nextTarget)
                            {
                               nextTarget = ball.id;
                            }
@@ -2369,7 +2133,7 @@ package
             var distSq:* = undefined;
             var compX:* = undefined;
             var compY:* = undefined;
-            if(cueBallInHand == true && shotRunning == false)
+            if (cueBallInHand == true && shotRunning == false)
             {
                trace("placing");
                ballArray[0].position.x = tableTop.mouseX / physScale;
@@ -2377,50 +2141,50 @@ package
                renderScreen();
                placementLegal = true;
                cueBall = ballArray[0];
-               if(cueBall.position.x > 30000 - ballRadius || cueBall.position.x < -30000 + ballRadius || cueBall.position.y > 15000 - ballRadius || cueBall.position.y < -15000 + ballRadius)
+               if (cueBall.position.x > 30000 - ballRadius || cueBall.position.x < -30000 + ballRadius || cueBall.position.y > 15000 - ballRadius || cueBall.position.y < -15000 + ballRadius)
                {
                   placementLegal = false;
                   cueBall.mc.alpha = 0.3;
                }
-               if(shotNum == 0)
+               if (shotNum == 0)
                {
-                  if(cueBall.position.x > -15000)
+                  if (cueBall.position.x > -15000)
                   {
                      placementLegal = false;
                      cueBall.mc.alpha = 0.3;
                   }
                }
-               if(cueBall.mc.x > tableTop.width / 2 || cueBall.mc.x < -tableTop.width / 2 || cueBall.mc.y > tableTop.height / 2 || cueBall.mc.y < -tableTop.height / 2)
+               if (cueBall.mc.x > tableTop.width / 2 || cueBall.mc.x < -tableTop.width / 2 || cueBall.mc.y > tableTop.height / 2 || cueBall.mc.y < -tableTop.height / 2)
                {
                   placementLegal = false;
                   cueBall.mc.alpha = 0;
                }
-               for(n = 1; n < ballArray.length; n++)
+               for (n = 1; n < ballArray.length; n++)
                {
                   ball = ballArray[n];
-                  if(ball.active == true)
+                  if (ball.active == true)
                   {
                      distSq = (ball.position.x - cueBall.position.x) * (ball.position.x - cueBall.position.x) + (ball.position.y - cueBall.position.y) * (ball.position.y - cueBall.position.y);
-                     if(distSq < ballRadius * 2 * ballRadius * 2 + 10)
+                     if (distSq < ballRadius * 2 * ballRadius * 2 + 10)
                      {
                         placementLegal = false;
                         cueBall.mc.alpha = 0.3;
                      }
                   }
                }
-               if(placementLegal == true)
+               if (placementLegal == true)
                {
                   cueBall.mc.alpha = 1;
                }
-               if(mouseIsDown == true)
+               if (mouseIsDown == true)
                {
-                  if(placementLegal == true)
+                  if (placementLegal == true)
                   {
                      cueBallInHand = false;
-                     cueCanvas.rotation = 180 + 180 / Math.PI * Math.atan2(ballArray[0].position.y,ballArray[0].position.x);
+                     cueCanvas.rotation = 180 + 180 / Math.PI * Math.atan2(ballArray[0].position.y, ballArray[0].position.x);
                      compX = Math.cos(cueCanvas.rotation * Math.PI / 180);
                      compY = Math.sin(cueCanvas.rotation * Math.PI / 180);
-                     aimDirectionVector = new Vector2D(compX,compY).normalize();
+                     aimDirectionVector = new Vector2D(compX, compY).normalize();
                      cueCanvas.x = stageWidth / 2 - 30 + ballArray[0].position.x * physScale;
                      cueCanvas.y = stageHeight / 2 + ballArray[0].position.y * physScale;
                      cueCanvas.visible = true;
@@ -2440,36 +2204,36 @@ package
          {
             var compX:Number = NaN;
             var compY:Number = NaN;
-            if(preventAim == false && cueBallInHand == false && settingPower == false && shotRunning == false && tuningLeft == false && tuningRight == false && mouseOverStrike == false)
+            if (preventAim == false && cueBallInHand == false && settingPower == false && shotRunning == false && tuningLeft == false && tuningRight == false && mouseOverStrike == false)
             {
-               if(mouseIsDown == true || leftKeyDown == true || rightKeyDown == true)
+               if (mouseIsDown == true || leftKeyDown == true || rightKeyDown == true)
                {
-                  if(tableTop.mouseX < tableTop.width / 2 && tableTop.mouseX > -tableTop.width / 2 && tableTop.mouseY < tableTop.height / 2 && tableTop.mouseY > -tableTop.height / 2)
+                  if (tableTop.mouseX < tableTop.width / 2 && tableTop.mouseX > -tableTop.width / 2 && tableTop.mouseY < tableTop.height / 2 && tableTop.mouseY > -tableTop.height / 2)
                   {
-                     if(rightKeyDown == false && leftKeyDown == false)
+                     if (rightKeyDown == false && leftKeyDown == false)
                      {
                         compX = gameCanvas.mouseX / physScale - ballArray[0].position.x;
                         compY = gameCanvas.mouseY / physScale - ballArray[0].position.y;
-                        aimDirectionVector = new Vector2D(compX,compY).normalize();
-                        cueCanvas.rotation = 180 / Math.PI * Math.atan2(compY,compX);
+                        aimDirectionVector = new Vector2D(compX, compY).normalize();
+                        cueCanvas.rotation = 180 / Math.PI * Math.atan2(compY, compX);
                      }
-                     if(rightKeyDown == false && leftKeyDown == false)
+                     if (rightKeyDown == false && leftKeyDown == false)
                      {
                         aimSpeed = 0.1;
                         aimAcc = 0.005;
                      }
-                     if(aimSpeed > 4)
+                     if (aimSpeed > 4)
                      {
                         aimSpeed = 4;
                      }
-                     if(aimAcc > 0.1)
+                     if (aimAcc > 0.1)
                      {
                         aimAcc = 0.1;
                      }
                      compX = Math.cos(cueCanvas.rotation * Math.PI / 180);
                      compY = Math.sin(cueCanvas.rotation * Math.PI / 180);
-                     aimDirectionVector = new Vector2D(compX,compY).normalize();
-                     if(oldAim.x != aimDirectionVector.x || oldAim.y != aimDirectionVector.y || leftKeyDown == true || rightKeyDown == true || upKeyDown == true || downKeyDown == true)
+                     aimDirectionVector = new Vector2D(compX, compY).normalize();
+                     if (oldAim.x != aimDirectionVector.x || oldAim.y != aimDirectionVector.y || leftKeyDown == true || rightKeyDown == true || upKeyDown == true || downKeyDown == true)
                      {
                         updateAimingGuide();
                      }
@@ -2494,7 +2258,7 @@ package
             var _loc11_:Array = null;
             var _loc12_:uint = 0;
             var _loc13_:Object = null;
-            if(cueBallInHand == false)
+            if (cueBallInHand == false)
             {
                _loc1_ = false;
                _loc5_ = false;
@@ -2508,98 +2272,98 @@ package
                preSim2.ballData = ballArraySim2;
                preSim2.targetID = -1;
                guideCanvas.visible = true;
-               _loc3_ = new Point(ballArraySim2[0].position.x * physScale,ballArraySim2[0].position.y * physScale);
-               for(_loc10_ = 0; _loc10_ < 15; _loc10_++)
+               _loc3_ = new Point(ballArraySim2[0].position.x * physScale, ballArraySim2[0].position.y * physScale);
+               for (_loc10_ = 0; _loc10_ < 15; _loc10_++)
                {
                   preSim2.updatePhysics();
                   _loc11_ = ballArraySim2[0].contactArray;
-                  if(_loc11_.length > 0)
+                  if (_loc11_.length > 0)
                   {
-                     for(_loc12_ = 0; _loc12_ < _loc11_.length; _loc12_++)
+                     for (_loc12_ = 0; _loc12_ < _loc11_.length; _loc12_++)
                      {
                         _loc13_ = _loc11_[_loc12_];
-                        if(_loc13_.collisionType == "ball")
+                        if (_loc13_.collisionType == "ball")
                         {
-                           if(_loc1_ == false)
+                           if (_loc1_ == false)
                            {
                               _loc1_ = true;
                               _loc2_ = _loc13_.target;
-                              _loc6_ = new Point(_loc13_.targetPosition.x * physScale,_loc13_.targetPosition.y * physScale);
-                              _loc9_ = new Point(_loc13_.position.x * physScale,_loc13_.position.y * physScale);
+                              _loc6_ = new Point(_loc13_.targetPosition.x * physScale, _loc13_.targetPosition.y * physScale);
+                              _loc9_ = new Point(_loc13_.position.x * physScale, _loc13_.position.y * physScale);
                               _loc7_.push(_loc9_);
                            }
                            else
                            {
-                              _loc8_.push(new Point(_loc13_.targetPosition.x * physScale,_loc13_.targetPosition.y * physScale));
+                              _loc8_.push(new Point(_loc13_.targetPosition.x * physScale, _loc13_.targetPosition.y * physScale));
                            }
                         }
-                        if(_loc13_.collisionType == "line" || _loc13_.collisionType == "vertex")
+                        if (_loc13_.collisionType == "line" || _loc13_.collisionType == "vertex")
                         {
-                           _loc7_.push(new Point(_loc13_.position.x * physScale,_loc13_.position.y * physScale));
+                           _loc7_.push(new Point(_loc13_.position.x * physScale, _loc13_.position.y * physScale));
                         }
                      }
                   }
-                  if(_loc1_ == true)
+                  if (_loc1_ == true)
                   {
                      _loc11_ = ballArraySim2[_loc2_.id].contactArray;
-                     if(_loc11_.length > 0)
+                     if (_loc11_.length > 0)
                      {
-                        for(_loc12_ = 0; _loc12_ < _loc11_.length; _loc12_++)
+                        for (_loc12_ = 0; _loc12_ < _loc11_.length; _loc12_++)
                         {
                            _loc13_ = _loc11_[_loc12_];
-                           _loc8_.push(new Point(_loc13_.position.x * physScale,_loc13_.position.y * physScale));
+                           _loc8_.push(new Point(_loc13_.position.x * physScale, _loc13_.position.y * physScale));
                         }
                      }
                      ballArraySim2[_loc2_.id].contactArray = new Array();
                   }
                   ballArraySim2[0].contactArray = new Array();
-                  _loc7_.push(new Point(ballArraySim2[0].position.x * physScale,ballArraySim2[0].position.y * physScale));
-                  if(_loc1_ == true)
+                  _loc7_.push(new Point(ballArraySim2[0].position.x * physScale, ballArraySim2[0].position.y * physScale));
+                  if (_loc1_ == true)
                   {
-                     _loc8_.push(new Point(_loc2_.position.x * physScale,_loc2_.position.y * physScale));
+                     _loc8_.push(new Point(_loc2_.position.x * physScale, _loc2_.position.y * physScale));
                   }
                }
                guideCanvas.graphics.clear();
-               guideCanvas.graphics.lineStyle(ballRadius * physScale * 2,16777215,0.1);
-               if(_loc7_.length > 1)
+               guideCanvas.graphics.lineStyle(ballRadius * physScale * 2, 16777215, 0.1);
+               if (_loc7_.length > 1)
                {
-                  guideCanvas.graphics.moveTo(_loc3_.x,_loc3_.y);
-                  for(_loc12_ = 0; _loc12_ < _loc7_.length; _loc12_++)
+                  guideCanvas.graphics.moveTo(_loc3_.x, _loc3_.y);
+                  for (_loc12_ = 0; _loc12_ < _loc7_.length; _loc12_++)
                   {
-                     guideCanvas.graphics.lineTo(_loc7_[_loc12_].x,_loc7_[_loc12_].y);
+                     guideCanvas.graphics.lineTo(_loc7_[_loc12_].x, _loc7_[_loc12_].y);
                   }
                }
-               guideCanvas.graphics.lineStyle(1,16777215,0.1);
-               if(_loc7_.length > 1)
+               guideCanvas.graphics.lineStyle(1, 16777215, 0.1);
+               if (_loc7_.length > 1)
                {
-                  guideCanvas.graphics.moveTo(_loc3_.x,_loc3_.y);
-                  for(_loc12_ = 0; _loc12_ < _loc7_.length; _loc12_++)
+                  guideCanvas.graphics.moveTo(_loc3_.x, _loc3_.y);
+                  for (_loc12_ = 0; _loc12_ < _loc7_.length; _loc12_++)
                   {
-                     guideCanvas.graphics.lineTo(_loc7_[_loc12_].x,_loc7_[_loc12_].y);
+                     guideCanvas.graphics.lineTo(_loc7_[_loc12_].x, _loc7_[_loc12_].y);
                   }
                }
-               guideCanvas.graphics.lineStyle(ballRadius * physScale * 2,16777215,0.1);
-               if(_loc8_.length > 1)
+               guideCanvas.graphics.lineStyle(ballRadius * physScale * 2, 16777215, 0.1);
+               if (_loc8_.length > 1)
                {
-                  guideCanvas.graphics.moveTo(_loc6_.x,_loc6_.y);
-                  for(_loc12_ = 0; _loc12_ < _loc8_.length; _loc12_++)
+                  guideCanvas.graphics.moveTo(_loc6_.x, _loc6_.y);
+                  for (_loc12_ = 0; _loc12_ < _loc8_.length; _loc12_++)
                   {
-                     guideCanvas.graphics.lineTo(_loc8_[_loc12_].x,_loc8_[_loc12_].y);
+                     guideCanvas.graphics.lineTo(_loc8_[_loc12_].x, _loc8_[_loc12_].y);
                   }
                }
-               guideCanvas.graphics.lineStyle(1,16777215,0.1);
-               if(_loc8_.length > 1)
+               guideCanvas.graphics.lineStyle(1, 16777215, 0.1);
+               if (_loc8_.length > 1)
                {
-                  guideCanvas.graphics.moveTo(_loc6_.x,_loc6_.y);
-                  for(_loc12_ = 0; _loc12_ < _loc8_.length; _loc12_++)
+                  guideCanvas.graphics.moveTo(_loc6_.x, _loc6_.y);
+                  for (_loc12_ = 0; _loc12_ < _loc8_.length; _loc12_++)
                   {
-                     guideCanvas.graphics.lineTo(_loc8_[_loc12_].x,_loc8_[_loc12_].y);
+                     guideCanvas.graphics.lineTo(_loc8_[_loc12_].x, _loc8_[_loc12_].y);
                   }
                }
-               if(_loc9_)
+               if (_loc9_)
                {
-                  guideCanvas.graphics.lineStyle(1,16777215,0.4);
-                  guideCanvas.graphics.drawCircle(_loc9_.x,_loc9_.y,ballRadius * physScale);
+                  guideCanvas.graphics.lineStyle(1, 16777215, 0.4);
+                  guideCanvas.graphics.drawCircle(_loc9_.x, _loc9_.y, ballRadius * physScale);
                   reticleOn = true;
                }
                else
@@ -2615,23 +2379,23 @@ package
             tuning.arrowR.gotoAndStop(1);
             tuning.x = ballArray[0].position.x * physScale;
             tuning.y = ballArray[0].position.y * physScale;
-            tuning.arrowL.addEventListener(MouseEvent.MOUSE_DOWN,fineTuneLeft);
-            tuning.arrowR.addEventListener(MouseEvent.MOUSE_DOWN,fineTuneRight);
-            tuning.strike.addEventListener(MouseEvent.MOUSE_OVER,prepareStrike);
-            tuning.strike.addEventListener(MouseEvent.CLICK,strikeMyBall);
-            tuning.strike.addEventListener(MouseEvent.MOUSE_OUT,cancelPrepareStrike);
-            stage.addEventListener(Event.MOUSE_LEAVE,cancelPrepareStrike);
+            tuning.arrowL.addEventListener(MouseEvent.MOUSE_DOWN, fineTuneLeft);
+            tuning.arrowR.addEventListener(MouseEvent.MOUSE_DOWN, fineTuneRight);
+            tuning.strike.addEventListener(MouseEvent.MOUSE_OVER, prepareStrike);
+            tuning.strike.addEventListener(MouseEvent.CLICK, strikeMyBall);
+            tuning.strike.addEventListener(MouseEvent.MOUSE_OUT, cancelPrepareStrike);
+            stage.addEventListener(Event.MOUSE_LEAVE, cancelPrepareStrike);
          };
          var cleanWidget:Function = function():void
          {
             tuning.visible = false;
             tuning.strike.strikeFill.alpha = 0;
-            tuning.arrowL.removeEventListener(MouseEvent.MOUSE_DOWN,fineTuneLeft);
-            tuning.arrowR.removeEventListener(MouseEvent.MOUSE_DOWN,fineTuneRight);
-            tuning.strike.removeEventListener(MouseEvent.MOUSE_OVER,prepareStrike);
-            tuning.strike.removeEventListener(MouseEvent.CLICK,strikeMyBall);
-            tuning.strike.removeEventListener(MouseEvent.MOUSE_OUT,cancelPrepareStrike);
-            stage.removeEventListener(Event.MOUSE_LEAVE,cancelPrepareStrike);
+            tuning.arrowL.removeEventListener(MouseEvent.MOUSE_DOWN, fineTuneLeft);
+            tuning.arrowR.removeEventListener(MouseEvent.MOUSE_DOWN, fineTuneRight);
+            tuning.strike.removeEventListener(MouseEvent.MOUSE_OVER, prepareStrike);
+            tuning.strike.removeEventListener(MouseEvent.CLICK, strikeMyBall);
+            tuning.strike.removeEventListener(MouseEvent.MOUSE_OUT, cancelPrepareStrike);
+            stage.removeEventListener(Event.MOUSE_LEAVE, cancelPrepareStrike);
          };
          var fineTuneLeftOver:Function = function(e:MouseEvent):void
          {
@@ -2652,37 +2416,37 @@ package
          prepareStrike = function(e:MouseEvent):void
          {
             mouseOverStrike = true;
-            TweenLite.to(cue,0.6,{
-               "x":-(power / 300) - ballRadius * 2 * physScale,
-               "ease":Quad.easeInOut
-            });
-            TweenLite.to(cue.shadow,0.6,{
-               "x":-(power / 300) - ballRadius * 2 * physScale,
-               "ease":Quad.easeInOut
-            });
-            TweenLite.to(tuning.strike.strikeFill,0.6,{"alpha":0.3});
+            TweenLite.to(cue, 0.6, {
+                  "x": -(power / 300) - ballRadius * 2 * physScale,
+                  "ease": Quad.easeInOut
+               });
+            TweenLite.to(cue.shadow, 0.6, {
+                  "x": -(power / 300) - ballRadius * 2 * physScale,
+                  "ease": Quad.easeInOut
+               });
+            TweenLite.to(tuning.strike.strikeFill, 0.6, {"alpha": 0.3});
          };
          cancelPrepareStrike = function(e:*):void
          {
             mouseOverStrike = false;
-            TweenLite.to(cue,0.5,{
-               "x":-ballRadius * 2 * physScale,
-               "ease":Quad.easeInOut
-            });
-            TweenLite.to(tuning.strike.strikeFill,0.6,{"alpha":0});
+            TweenLite.to(cue, 0.5, {
+                  "x": -ballRadius * 2 * physScale,
+                  "ease": Quad.easeInOut
+               });
+            TweenLite.to(tuning.strike.strikeFill, 0.6, {"alpha": 0});
             cue.shadow.x = cue.x;
          };
          var fineTuneUpdate:Function = function():void
          {
             var compX:* = undefined;
             var compY:* = undefined;
-            if(tuning.visible == true)
+            if (tuning.visible == true)
             {
-               if(mouseIsDown == true || leftKeyDown == true || rightKeyDown == true)
+               if (mouseIsDown == true || leftKeyDown == true || rightKeyDown == true)
                {
-                  if(tuningLeft == true || leftKeyDown == true)
+                  if (tuningLeft == true || leftKeyDown == true)
                   {
-                     if(shiftKeyDown == true)
+                     if (shiftKeyDown == true)
                      {
                         cueCanvas.rotation -= 0.5;
                      }
@@ -2690,16 +2454,16 @@ package
                      {
                         cueCanvas.rotation -= aimSpeed;
                         aimSpeed += 0.002;
-                        if(aimSpeed >= 0.1)
+                        if (aimSpeed >= 0.1)
                         {
                            aimSpeed = 0.1;
                         }
                      }
                      tuning.arrowL.gotoAndStop(3);
                   }
-                  if(tuningRight == true || rightKeyDown == true)
+                  if (tuningRight == true || rightKeyDown == true)
                   {
-                     if(shiftKeyDown == true)
+                     if (shiftKeyDown == true)
                      {
                         cueCanvas.rotation += 0.5;
                      }
@@ -2707,18 +2471,18 @@ package
                      {
                         cueCanvas.rotation += aimSpeed;
                         aimSpeed += 0.002;
-                        if(aimSpeed >= 0.1)
+                        if (aimSpeed >= 0.1)
                         {
                            aimSpeed = 0.1;
                         }
                      }
                      tuning.arrowR.gotoAndStop(3);
                   }
-                  if(tuningLeft == true || tuningRight == true || leftKeyDown == true || rightKeyDown == true)
+                  if (tuningLeft == true || tuningRight == true || leftKeyDown == true || rightKeyDown == true)
                   {
                      compX = Math.cos(cueCanvas.rotation * Math.PI / 180);
                      compY = Math.sin(cueCanvas.rotation * Math.PI / 180);
-                     aimDirectionVector = new Vector2D(compX,compY).normalize();
+                     aimDirectionVector = new Vector2D(compX, compY).normalize();
                      updateAimingGuide();
                   }
                }
@@ -2742,36 +2506,36 @@ package
          };
          var setPower:Function = function():void
          {
-            if(shotRunning == false)
+            if (shotRunning == false)
             {
-               if(mouseIsDown == true)
+               if (mouseIsDown == true)
                {
-                  if(gui.powerCover.mouseX < gui.powerCover.width && gui.powerCover.mouseX > 0 && gui.powerCover.mouseY < gui.powerCover.height && gui.powerCover.mouseY > 0)
+                  if (gui.powerCover.mouseX < gui.powerCover.width && gui.powerCover.mouseX > 0 && gui.powerCover.mouseY < gui.powerCover.height && gui.powerCover.mouseY > 0)
                   {
                      gui.power.mask.height = 308 - gui.power.mouseY + 35;
                      updateAimingGuide();
                   }
                }
-               if(upKeyDown == true)
+               if (upKeyDown == true)
                {
                   gui.power.mask.height += 8;
                   updateAimingGuide();
                }
-               if(downKeyDown == true)
+               if (downKeyDown == true)
                {
                   gui.power.mask.height -= 8;
                   updateAimingGuide();
                }
-               if(spaceKeyDown == true)
+               if (spaceKeyDown == true)
                {
                   gui.power.mask.height = 154;
                   updateAimingGuide();
                }
-               if(gui.power.mask.height > 308)
+               if (gui.power.mask.height > 308)
                {
                   gui.power.mask.height = 308;
                }
-               if(gui.power.mask.height < 0)
+               if (gui.power.mask.height < 0)
                {
                   gui.power.mask.height = 0;
                }
@@ -2780,14 +2544,14 @@ package
          };
          var updateCountdown:Function = function():void
          {
-            if(timeRemainingOn == true && ballsRemaining > 0 && pauseCountdown == false)
+            if (timeRemainingOn == true && ballsRemaining > 0 && pauseCountdown == false)
             {
-               ++countdownCounter;
-               if(countdownCounter == 30)
+               ++ countdownCounter;
+               if (countdownCounter == 30)
                {
                   countdownCounter = 0;
                   --timeRemaining;
-                  if(timeRemaining < 0)
+                  if (timeRemaining < 0)
                   {
                      timeRemaining = 0;
                      checkLevelOver();
@@ -2801,48 +2565,48 @@ package
             var mustUpdateGuide:* = undefined;
             var distSq:Number = NaN;
             var ang:Number = NaN;
-            if(settingPower == false && shotRunning == false)
+            if (settingPower == false && shotRunning == false)
             {
                mustUpdateGuide = false;
-               if(mouseIsDown == true)
+               if (mouseIsDown == true)
                {
-                  if(gui.spinSetter.mouseX < gui.spinSetter.width / 2 && gui.spinSetter.mouseX > -gui.spinSetter.width / 2 && gui.spinSetter.mouseY < gui.spinSetter.height / 2 && gui.spinSetter.mouseY > -gui.spinSetter.height / 2)
+                  if (gui.spinSetter.mouseX < gui.spinSetter.width / 2 && gui.spinSetter.mouseX > -gui.spinSetter.width / 2 && gui.spinSetter.mouseY < gui.spinSetter.height / 2 && gui.spinSetter.mouseY > -gui.spinSetter.height / 2)
                   {
                      gui.spinSetter.crosshair.x = gui.spinSetter.mouseX;
                      gui.spinSetter.crosshair.y = gui.spinSetter.mouseY;
                      mustUpdateGuide = true;
                   }
                }
-               if(leftKey2Down == true)
+               if (leftKey2Down == true)
                {
                   gui.spinSetter.crosshair.x -= 1;
                   mustUpdateGuide = true;
                }
-               if(rightKey2Down == true)
+               if (rightKey2Down == true)
                {
                   gui.spinSetter.crosshair.x += 1;
                   mustUpdateGuide = true;
                }
-               if(upKey2Down == true)
+               if (upKey2Down == true)
                {
                   gui.spinSetter.crosshair.y -= 1;
                   mustUpdateGuide = true;
                }
-               if(downKey2Down == true)
+               if (downKey2Down == true)
                {
                   gui.spinSetter.crosshair.y += 1;
                   mustUpdateGuide = true;
                }
-               if(rKeyDown == true)
+               if (rKeyDown == true)
                {
                   gui.spinSetter.crosshair.x = 0;
                   gui.spinSetter.crosshair.y = 0;
                   mustUpdateGuide = true;
                }
                distSq = gui.spinSetter.crosshair.x * gui.spinSetter.crosshair.x + gui.spinSetter.crosshair.y * gui.spinSetter.crosshair.y;
-               if(distSq > gui.spinSetter.ball.width / 2 * (gui.spinSetter.ball.width / 2))
+               if (distSq > gui.spinSetter.ball.width / 2 * (gui.spinSetter.ball.width / 2))
                {
-                  ang = Math.atan2(gui.spinSetter.crosshair.y,gui.spinSetter.crosshair.x);
+                  ang = Math.atan2(gui.spinSetter.crosshair.y, gui.spinSetter.crosshair.x);
                   gui.spinSetter.crosshair.x = gui.spinSetter.ball.width / 2 * Math.cos(ang);
                   gui.spinSetter.crosshair.y = gui.spinSetter.ball.width / 2 * Math.sin(ang);
                }
@@ -2853,7 +2617,7 @@ package
                ballArraySim[0].english = ballArray[0].english;
                ballArraySim2[0].english = ballArray[0].english;
                cue.y = 0.8 * ballArray[0].english * ballRadius * physScale;
-               if(mustUpdateGuide == true)
+               if (mustUpdateGuide == true)
                {
                   updateAimingGuide();
                }
@@ -2861,7 +2625,7 @@ package
          };
          var strikeWithKeyboard:Function = function():void
          {
-            if(spaceKeyDown == true && shotRunning == false)
+            if (spaceKeyDown == true && shotRunning == false)
             {
                strikeMyBall(null);
             }
@@ -2870,9 +2634,9 @@ package
          {
             var hideCueCanvas:Function = null;
             var volume:* = undefined;
-            if(tuningLeft == false && tuningRight == false)
+            if (tuningLeft == false && tuningRight == false)
             {
-               if(power > 0)
+               if (power > 0)
                {
                   hideCueCanvas = function():void
                   {
@@ -2884,27 +2648,27 @@ package
                   pauseCountdown = false;
                   gui.strikeHint.visible = false;
                   gui.adjustHint.visible = false;
-                  if(requiredBallOn == true || bonusBallOn == true)
+                  if (requiredBallOn == true || bonusBallOn == true)
                   {
                      marker.visible = false;
-                     if(showNextTarget == true)
+                     if (showNextTarget == true)
                      {
                         marker2.visible = false;
                      }
                   }
-                  TweenLite.to(cue,0.5,{
-                     "x":power / 600,
-                     "ease":Quad.easeOut
-                  });
-                  TweenLite.to(cue.shadow,0.5,{
-                     "x":power / 600,
-                     "ease":Quad.easeOut
-                  });
-                  TweenLite.to(cueCanvas,1,{
-                     "delay":1.5,
-                     "alpha":0,
-                     "onComplete":hideCueCanvas
-                  });
+                  TweenLite.to(cue, 0.5, {
+                        "x": power / 600,
+                        "ease": Quad.easeOut
+                     });
+                  TweenLite.to(cue.shadow, 0.5, {
+                        "x": power / 600,
+                        "ease": Quad.easeOut
+                     });
+                  TweenLite.to(cueCanvas, 1, {
+                        "delay": 1.5,
+                        "alpha": 0,
+                        "onComplete": hideCueCanvas
+                     });
                   cueTweenComplete = false;
                   cleanWidget();
                   ++shotNum;
@@ -2912,28 +2676,25 @@ package
                   updateGUI();
                   ballArray[0].velocity = aimDirectionVector.times(power);
                   ballArray[0].ySpin = -ballArray[0].english * power / 300;
-                  if(ballArray[0].ySpin > 20)
+                  if (ballArray[0].ySpin > 20)
                   {
                      ballArray[0].ySpin = 20;
                   }
-                  if(ballArray[0].ySpin < -20)
+                  if (ballArray[0].ySpin < -20)
                   {
                      ballArray[0].ySpin = -20;
                   }
                   volume = power / 6000;
-                  if(volume > 1)
+                  if (volume > 1)
                   {
                      volume = 1;
                   }
-                  if(volume < 0.3)
+                  if (volume < 0.3)
                   {
                      volume = 0.3;
                   }
-                  Sound.Play("cue",volume);
-                  if(online == true)
-                  {
-                     sendShot();
-                  }
+                  Sound.Play("cue", volume);
+
                }
             }
          };
@@ -2942,21 +2703,21 @@ package
             var ballsMoving:Boolean = false;
             var n:uint = 0;
             var ball:Object = null;
-            if(shotRunning == true && pocketTweenComplete == true && cueTweenComplete == true)
+            if (shotRunning == true && pocketTweenComplete == true && cueTweenComplete == true)
             {
                ballsMoving = false;
-               for(n = 0; n < ballArray.length; n++)
+               for (n = 0; n < ballArray.length; n++)
                {
                   ball = ballArray[n];
-                  if(ball.velocity.magnitude > 0)
+                  if (ball.velocity.magnitude > 0)
                   {
                      ballsMoving = true;
                   }
                }
-               if(ballsMoving == false)
+               if (ballsMoving == false)
                {
                   shotRunning = false;
-                  if(gameMode == 0)
+                  if (gameMode == 0)
                   {
                      transferBonus();
                   }
@@ -2971,30 +2732,30 @@ package
          {
             var n:* = undefined;
             var updateTransferBonus:Function = null;
-            if(bonus > 0)
+            if (bonus > 0)
             {
                updateTransferBonus = function(e:Event):*
                {
-                  if(n > bonus)
+                  if (n > bonus)
                   {
                      n = bonus;
                   }
                   bonus -= n;
-                  if(fouled == false)
+                  if (fouled == false)
                   {
                      score += n;
                   }
                   updateGUI();
-                  if(bonus <= 0)
+                  if (bonus <= 0)
                   {
-                     stage.removeEventListener(Event.ENTER_FRAME,updateTransferBonus);
+                     stage.removeEventListener(Event.ENTER_FRAME, updateTransferBonus);
                      preventQuit = false;
                      pauseCountdown = false;
                      endShot();
                   }
                };
                n = Math.ceil(bonus / 30);
-               stage.addEventListener(Event.ENTER_FRAME,updateTransferBonus);
+               stage.addEventListener(Event.ENTER_FRAME, updateTransferBonus);
                preventQuit = true;
                pauseCountdown = true;
             }
@@ -3005,15 +2766,15 @@ package
          };
          var endShot:Function = function():void
          {
-            if(gameMode == 0)
+            if (gameMode == 0)
             {
                checkLevelOver();
             }
-            if(gameRunning == true)
+            if (gameRunning == true)
             {
-               setTimeout(resetShotVars,500);
+               setTimeout(resetShotVars, 500);
             }
-            if(online == true)
+            if (online == true)
             {
                verifyMyPositions();
             }
@@ -3024,19 +2785,19 @@ package
             var b:uint = 0;
             var ball:Object = null;
             total = 0;
-            for(b = 0; b < ballArray.length; b++)
+            for (b = 0; b < ballArray.length; b++)
             {
                ball = ballArray[b];
                total += Maths.fixNumber((ball.position.x + ball.position.y) * physScale);
             }
             total = Maths.fixNumber(total * 10000);
             debug.textField.appendText("pos: " + String(total) + "\n");
-            sendVerification(total);
+
             switchTurns();
          };
          var placeYourCueBall:Function = function(cueBallPositionX:Number, cueBallPositionY:Number):void
          {
-            if(myTurn == false)
+            if (myTurn == false)
             {
                ballArray[0].position.x = cueBallPositionX;
                ballArray[0].position.y = cueBallPositionY;
@@ -3047,32 +2808,32 @@ package
          var strikeYourBall:Function = function(vx:Number, vy:Number, s:Number, e:Number):void
          {
             var volume:* = undefined;
-            if(myTurn == false)
+            if (myTurn == false)
             {
-               ++shotNum;
+               ++ shotNum;
                shotRunning = true;
                ballArray[0].screw = s;
                ballArray[0].english = e;
-               ballArray[0].velocity = new Vector2D(vx,vy);
+               ballArray[0].velocity = new Vector2D(vx, vy);
                ballArray[0].ySpin = -ballArray[0].english * ballArray[0].velocity.magnitude / 300;
-               if(ballArray[0].ySpin > 20)
+               if (ballArray[0].ySpin > 20)
                {
                   ballArray[0].ySpin = 20;
                }
-               if(ballArray[0].ySpin < -20)
+               if (ballArray[0].ySpin < -20)
                {
                   ballArray[0].ySpin = -20;
                }
                volume = ballArray[0].velocity.magnitude / 6000;
-               if(volume > 1)
+               if (volume > 1)
                {
                   volume = 1;
                }
-               if(volume < 0.3)
+               if (volume < 0.3)
                {
                   volume = 0.3;
                }
-               Sound.Play("cue",volume);
+               Sound.Play("cue", volume);
             }
          };
          var checkYourShotOver:Function = function():void
@@ -3080,22 +2841,22 @@ package
             var ballsMoving:Boolean = false;
             var n:uint = 0;
             var ball:Object = null;
-            if(shotRunning == true)
+            if (shotRunning == true)
             {
                ballsMoving = false;
-               for(n = 0; n < ballArray.length; n++)
+               for (n = 0; n < ballArray.length; n++)
                {
                   ball = ballArray[n];
-                  if(ball.velocity.magnitude > 0)
+                  if (ball.velocity.magnitude > 0)
                   {
                      ballsMoving = true;
                   }
                }
-               if(ballsMoving == false)
+               if (ballsMoving == false)
                {
                   shotRunning = false;
                   resetShotVars();
-                  addEventListener(Event.ENTER_FRAME,verifyYourPositions);
+                  addEventListener(Event.ENTER_FRAME, verifyYourPositions);
                }
             }
          };
@@ -3104,19 +2865,19 @@ package
             var total:Number = NaN;
             var b:uint = 0;
             var ball:Object = null;
-            if(verificationReceived == true)
+            if (verificationReceived == true)
             {
                verificationReceived = false;
-               removeEventListener(Event.ENTER_FRAME,verifyYourPositions);
+               removeEventListener(Event.ENTER_FRAME, verifyYourPositions);
                total = 0;
-               for(b = 0; b < ballArray.length; b++)
+               for (b = 0; b < ballArray.length; b++)
                {
                   ball = ballArray[b];
                   total += Maths.fixNumber((ball.position.x + ball.position.y) * physScale);
                }
                total = Maths.fixNumber(total * 10000);
                debug.textField.appendText("pos: " + String(total) + "\n");
-               if(receivedVerificationValue == total)
+               if (receivedVerificationValue == total)
                {
                   debug.textField.appendText("Clients in sync\n");
                }
@@ -3129,7 +2890,7 @@ package
          };
          reRack = function(e:*):void
          {
-            if(preventQuit == false)
+            if (preventQuit == false)
             {
                gameRunning = false;
                cleanUp();
@@ -3139,46 +2900,46 @@ package
          quit = function(e:MouseEvent):void
          {
             var swap:Function = null;
-            if(preventQuit == false)
+            if (preventQuit == false)
             {
                swap = function():void
                {
                   cleanUp();
                   musicVolume = 0;
-                  stage.addEventListener(Event.ENTER_FRAME,fadeMusicIn);
+                  stage.addEventListener(Event.ENTER_FRAME, fadeMusicIn);
                   showMainMenu();
                };
                gameRunning = false;
                fade();
-               setTimeout(swap,500);
+               setTimeout(swap, 500);
             }
          };
          var showLevelComplete:Function = function():void
          {
             musicVolume = 0;
-            stage.addEventListener(Event.ENTER_FRAME,fadeMusicIn);
+            stage.addEventListener(Event.ENTER_FRAME, fadeMusicIn);
             levelComplete = new levelComplete_mc();
             projectCanvas.addChild(levelComplete);
             levelComplete.x = gameCanvas.x;
             levelComplete.y = gameCanvas.y;
-            levelComplete._SELECT_LEVEL_.addEventListener(MouseEvent.CLICK,levelCompleteToLevelSelect);
-            levelComplete._NEXT_SESSION_.addEventListener(MouseEvent.CLICK,levelCompleteToNextLevel);
-            stage.addEventListener(KeyboardEvent.KEY_DOWN,onSPKeyDown);
-            levelComplete.sponsorLogo.addEventListener(MouseEvent.CLICK,gotoSponsor);
+            levelComplete._SELECT_LEVEL_.addEventListener(MouseEvent.CLICK, levelCompleteToLevelSelect);
+            levelComplete._NEXT_SESSION_.addEventListener(MouseEvent.CLICK, levelCompleteToNextLevel);
+            stage.addEventListener(KeyboardEvent.KEY_DOWN, onSPKeyDown);
+
          };
          onSPKeyDown = function(e:KeyboardEvent):void
          {
-            if(e.keyCode == Keyboard.SPACE)
+            if (e.keyCode == Keyboard.SPACE)
             {
                levelCompleteToNextLevel(null);
             }
          };
          var removeLevelComplete:Function = function():void
          {
-            levelComplete._SELECT_LEVEL_.removeEventListener(MouseEvent.CLICK,levelCompleteToLevelSelect);
-            levelComplete._NEXT_SESSION_.removeEventListener(MouseEvent.CLICK,levelCompleteToNextLevel);
-            stage.removeEventListener(KeyboardEvent.KEY_DOWN,onSPKeyDown);
-            levelComplete.sponsorLogo.removeEventListener(MouseEvent.CLICK,gotoSponsor);
+            levelComplete._SELECT_LEVEL_.removeEventListener(MouseEvent.CLICK, levelCompleteToLevelSelect);
+            levelComplete._NEXT_SESSION_.removeEventListener(MouseEvent.CLICK, levelCompleteToNextLevel);
+            stage.removeEventListener(KeyboardEvent.KEY_DOWN, onSPKeyDown);
+
             projectCanvas.removeChild(levelComplete);
          };
          levelCompleteToLevelSelect = function(e:MouseEvent):void
@@ -3191,7 +2952,7 @@ package
                showLevelSelect();
             };
             fade();
-            setTimeout(swap,500);
+            setTimeout(swap, 500);
          };
          levelCompleteToNextLevel = function(e:*):void
          {
@@ -3202,7 +2963,7 @@ package
                cleanUp();
                ++currentLevel;
                hintShown = false;
-               if(currentLevel < 21)
+               if (currentLevel < 21)
                {
                   initGame();
                }
@@ -3212,35 +2973,35 @@ package
                }
             };
             fade();
-            setTimeout(swap,500);
+            setTimeout(swap, 500);
          };
          var showLevelFailed:Function = function(message:*):void
          {
             musicVolume = 0;
-            stage.addEventListener(Event.ENTER_FRAME,fadeMusicIn);
+            stage.addEventListener(Event.ENTER_FRAME, fadeMusicIn);
             levelFailed = new levelFailed_mc();
             projectCanvas.addChild(levelFailed);
             levelFailed.x = gameCanvas.x;
             levelFailed.y = gameCanvas.y;
             levelFailed.message.text = message;
-            levelFailed._SELECT_LEVEL_.addEventListener(MouseEvent.CLICK,levelFailedToLevelSelect);
-            levelFailed._TRY_AGAIN_.addEventListener(MouseEvent.CLICK,levelFailedToSameLevel);
-            stage.addEventListener(KeyboardEvent.KEY_DOWN,onRKeyDown);
-            levelFailed.sponsorLogo.addEventListener(MouseEvent.CLICK,gotoSponsor);
+            levelFailed._SELECT_LEVEL_.addEventListener(MouseEvent.CLICK, levelFailedToLevelSelect);
+            levelFailed._TRY_AGAIN_.addEventListener(MouseEvent.CLICK, levelFailedToSameLevel);
+            stage.addEventListener(KeyboardEvent.KEY_DOWN, onRKeyDown);
+
          };
          onRKeyDown = function(e:KeyboardEvent):void
          {
-            if(e.keyCode == 114 || e.keyCode == 82)
+            if (e.keyCode == 114 || e.keyCode == 82)
             {
                levelFailedToSameLevel(null);
             }
          };
          var removeLevelFailed:Function = function():void
          {
-            levelFailed._SELECT_LEVEL_.removeEventListener(MouseEvent.CLICK,levelFailedToLevelSelect);
-            levelFailed._TRY_AGAIN_.removeEventListener(MouseEvent.CLICK,levelFailedToSameLevel);
-            stage.removeEventListener(KeyboardEvent.KEY_DOWN,onRKeyDown);
-            levelFailed.sponsorLogo.removeEventListener(MouseEvent.CLICK,gotoSponsor);
+            levelFailed._SELECT_LEVEL_.removeEventListener(MouseEvent.CLICK, levelFailedToLevelSelect);
+            levelFailed._TRY_AGAIN_.removeEventListener(MouseEvent.CLICK, levelFailedToSameLevel);
+            stage.removeEventListener(KeyboardEvent.KEY_DOWN, onRKeyDown);
+
             projectCanvas.removeChild(levelFailed);
          };
          levelFailedToLevelSelect = function(e:*):void
@@ -3253,7 +3014,7 @@ package
                showLevelSelect();
             };
             fade();
-            setTimeout(swap,500);
+            setTimeout(swap, 500);
          };
          levelFailedToSameLevel = function(e:MouseEvent):void
          {
@@ -3265,7 +3026,7 @@ package
                initGame();
             };
             fade();
-            setTimeout(swap,500);
+            setTimeout(swap, 500);
          };
          var showChallengeComplete:Function = function():void
          {
@@ -3274,17 +3035,17 @@ package
             challengeComplete.message.text = "You scored " + String(score) + " points.\nSubmit your score to see how good you are!";
             challengeComplete.x = gameCanvas.x;
             challengeComplete.y = gameCanvas.y;
-            challengeComplete._SUBMIT_SCORE_.addEventListener(MouseEvent.CLICK,submitScore);
-            challengeComplete._BACK_.addEventListener(MouseEvent.CLICK,challengeCompleteToLevelSelect);
-            challengeComplete._TRY_AGAIN_.addEventListener(MouseEvent.CLICK,challengeCompleteToSameLevel);
-            challengeComplete.sponsorLogo.addEventListener(MouseEvent.CLICK,gotoSponsor);
+            challengeComplete._SUBMIT_SCORE_.addEventListener(MouseEvent.CLICK, submitScore);
+            challengeComplete._BACK_.addEventListener(MouseEvent.CLICK, challengeCompleteToLevelSelect);
+            challengeComplete._TRY_AGAIN_.addEventListener(MouseEvent.CLICK, challengeCompleteToSameLevel);
+
          };
          var removeChallengeComplete:Function = function():void
          {
-            challengeComplete._SUBMIT_SCORE_.removeEventListener(MouseEvent.CLICK,submitScore);
-            challengeComplete._BACK_.removeEventListener(MouseEvent.CLICK,challengeCompleteToLevelSelect);
-            challengeComplete._TRY_AGAIN_.removeEventListener(MouseEvent.CLICK,challengeCompleteToSameLevel);
-            challengeComplete.sponsorLogo.removeEventListener(MouseEvent.CLICK,gotoSponsor);
+            challengeComplete._SUBMIT_SCORE_.removeEventListener(MouseEvent.CLICK, submitScore);
+            challengeComplete._BACK_.removeEventListener(MouseEvent.CLICK, challengeCompleteToLevelSelect);
+            challengeComplete._TRY_AGAIN_.removeEventListener(MouseEvent.CLICK, challengeCompleteToSameLevel);
+
             projectCanvas.removeChild(challengeComplete);
          };
          challengeCompleteToLevelSelect = function(e:MouseEvent):void
@@ -3297,7 +3058,7 @@ package
                showLevelSelect();
             };
             fade();
-            setTimeout(swap,500);
+            setTimeout(swap, 500);
          };
          challengeCompleteToSameLevel = function(e:MouseEvent):void
          {
@@ -3309,43 +3070,40 @@ package
                initGame();
             };
             fade();
-            setTimeout(swap,500);
+            setTimeout(swap, 500);
          };
          submitScore = function(e:MouseEvent):*
          {
             var o:Object = null;
             var boardID:String = null;
             o = {
-               "n":[14,14,4,13,7,3,12,15,14,5,1,14,4,0,15,9],
-               "f":function(i:Number, s:String):String
+                  "n": [14, 14, 4, 13, 7, 3, 12, 15, 14, 5, 1, 14, 4, 0, 15, 9],
+                  "f": function(i:Number, s:String):String
                {
-                  if(s.length == 16)
+                  if (s.length == 16)
                   {
                      return s;
                   }
-                  return this.f(i + 1,s + this.n[i].toString(16));
+                  return this.f(i + 1, s + this.n[i].toString(16));
                }
             };
-            boardID = o.f(0,"");
-            MochiScores.showLeaderboard({
-               "boardID":boardID,
-               "score":score
-            });
+            boardID = o.f(0, "");
+
          };
          var cleanUp:Function = function():void
          {
             cleanWidget();
-            stage.removeEventListener(Event.ENTER_FRAME,gameLoop);
-            Dispatcher.GetInstance().removeEventListener(CustomEvent.EVENT,onContact);
+            stage.removeEventListener(Event.ENTER_FRAME, gameLoop);
+            Dispatcher.GetInstance().removeEventListener(CustomEvent.EVENT, onContact);
             disableMouseListener();
             disableKeyboardListener();
-            gui._QUIT_.removeEventListener(MouseEvent.CLICK,quit);
-            gui._RESTART_.removeEventListener(MouseEvent.CLICK,reRack);
-            gui._HINT_.removeEventListener(MouseEvent.CLICK,showHint);
-            gui._WALKTHROUGH_.removeEventListener(MouseEvent.CLICK,gotoWalkthrough);
-            gui.sponsorLogo.removeEventListener(MouseEvent.CLICK,gotoSponsor);
-            stage.removeEventListener(Event.ENTER_FRAME,transferBonus);
-            if(requiredBallOn == true || bonusBallOn == true)
+            gui._QUIT_.removeEventListener(MouseEvent.CLICK, quit);
+            gui._RESTART_.removeEventListener(MouseEvent.CLICK, reRack);
+            gui._HINT_.removeEventListener(MouseEvent.CLICK, showHint);
+            gui._WALKTHROUGH_.removeEventListener(MouseEvent.CLICK, gotoWalkthrough);
+
+            stage.removeEventListener(Event.ENTER_FRAME, transferBonus);
+            if (requiredBallOn == true || bonusBallOn == true)
             {
                gameCanvas.removeChild(marker);
             }
@@ -3358,7 +3116,7 @@ package
             vertexArray = new Array();
             pocketArray = new Array();
             ballArraySim = new Array();
-            oldAim = new Vector2D(0,0);
+            oldAim = new Vector2D(0, 0);
             phys = null;
             preSim = null;
             marker = null;
@@ -3374,11 +3132,11 @@ package
          {
             gui.bonus.text = String(bonus);
             gui.score.text = String(score);
-            if(shotsRemainingOn == true)
+            if (shotsRemainingOn == true)
             {
                gui.topLeftValue.text = String(shotsRemaining);
             }
-            if(timeRemainingOn == true)
+            if (timeRemainingOn == true)
             {
                gui.topLeftValue.text = String(timeRemaining);
             }
@@ -3386,14 +3144,14 @@ package
          var showMessage:Function = function():void
          {
             gui.message.text = message;
-            TweenLite.from(gui.message,2,{"y":gui.message.y + gui.message.height});
+            TweenLite.from(gui.message, 2, {"y": gui.message.y + gui.message.height});
          };
          var initArrays:Function = function():void
          {
          };
          var setLevelData:Function = function():void
          {
-            switch(currentLevel)
+            switch (currentLevel)
             {
                case 1:
                   hintOn = true;
@@ -3830,7 +3588,7 @@ package
                   break;
                case 20:
                   hintOn = false;
-                  message = "FINAL SESSION: Pot the full set of balls in the required sequence. No shot limit, but pot one wrong ball and it\'s all over.";
+                  message = "FINAL SESSION: Pot the full set of balls in the required sequence. No shot limit, but pot one wrong ball and it's all over.";
                   foulsProhibited = true;
                   bonusBallOn = false;
                   shotsRemainingOn = false;
@@ -3889,29 +3647,29 @@ package
             spacing = 0.01;
             j = 1 + spacing;
             k = 1.732 + spacing;
-            switch(currentLevel)
+            switch (currentLevel)
             {
                case 1:
-                  ballPositionArray[0] = new Point(-15000,0);
-                  ballPositionArray[1] = new Point(20000,-5000);
+                  ballPositionArray[0] = new Point(-15000, 0);
+                  ballPositionArray[1] = new Point(20000, -5000);
                   break;
                case 2:
-                  ballPositionArray[0] = new Point(-15000,0);
-                  ballPositionArray[1] = new Point(px,0);
-                  ballPositionArray[2] = new Point(px + k * ballRadius,ballRadius * j);
-                  ballPositionArray[15] = new Point(px + k * ballRadius,-ballRadius * j);
-                  ballPositionArray[8] = new Point(px + 2 * k * ballRadius,0);
-                  ballPositionArray[5] = new Point(px + 2 * k * ballRadius,16000);
-                  ballPositionArray[10] = new Point(px + 2 * k * ballRadius,16000);
-                  ballPositionArray[7] = new Point(px + 3 * k * ballRadius,16000);
-                  ballPositionArray[4] = new Point(px + 3 * k * ballRadius,16000);
-                  ballPositionArray[9] = new Point(px + 3 * k * ballRadius,16000);
-                  ballPositionArray[6] = new Point(px + 3 * k * ballRadius,16000);
-                  ballPositionArray[11] = new Point(px + 4 * k * ballRadius,16000);
-                  ballPositionArray[12] = new Point(px + 4 * k * ballRadius,16000);
-                  ballPositionArray[13] = new Point(px + 4 * k * ballRadius,16000);
-                  ballPositionArray[14] = new Point(px + 4 * k * ballRadius,16000);
-                  ballPositionArray[3] = new Point(px + 4 * k * ballRadius,16000);
+                  ballPositionArray[0] = new Point(-15000, 0);
+                  ballPositionArray[1] = new Point(px, 0);
+                  ballPositionArray[2] = new Point(px + k * ballRadius, ballRadius * j);
+                  ballPositionArray[15] = new Point(px + k * ballRadius, -ballRadius * j);
+                  ballPositionArray[8] = new Point(px + 2 * k * ballRadius, 0);
+                  ballPositionArray[5] = new Point(px + 2 * k * ballRadius, 16000);
+                  ballPositionArray[10] = new Point(px + 2 * k * ballRadius, 16000);
+                  ballPositionArray[7] = new Point(px + 3 * k * ballRadius, 16000);
+                  ballPositionArray[4] = new Point(px + 3 * k * ballRadius, 16000);
+                  ballPositionArray[9] = new Point(px + 3 * k * ballRadius, 16000);
+                  ballPositionArray[6] = new Point(px + 3 * k * ballRadius, 16000);
+                  ballPositionArray[11] = new Point(px + 4 * k * ballRadius, 16000);
+                  ballPositionArray[12] = new Point(px + 4 * k * ballRadius, 16000);
+                  ballPositionArray[13] = new Point(px + 4 * k * ballRadius, 16000);
+                  ballPositionArray[14] = new Point(px + 4 * k * ballRadius, 16000);
+                  ballPositionArray[3] = new Point(px + 4 * k * ballRadius, 16000);
                   break;
                case 3:
                   ballPositionArray = setupLevelFromTemplate();
@@ -3932,22 +3690,22 @@ package
                   ballPositionArray = setupLevelFromTemplate();
                   break;
                case 9:
-                  ballPositionArray[0] = new Point(-15000,0);
-                  ballPositionArray[1] = new Point(px,0);
-                  ballPositionArray[2] = new Point(px + k * ballRadius,ballRadius * j);
-                  ballPositionArray[15] = new Point(px + k * ballRadius,-ballRadius * j);
-                  ballPositionArray[8] = new Point(px + 2 * k * ballRadius,0);
-                  ballPositionArray[5] = new Point(px + 2 * k * ballRadius,2 * ballRadius * j);
-                  ballPositionArray[10] = new Point(px + 2 * k * ballRadius,-2 * ballRadius * j);
-                  ballPositionArray[7] = new Point(px + 3 * k * ballRadius,16000);
-                  ballPositionArray[4] = new Point(px + 3 * k * ballRadius,16000);
-                  ballPositionArray[9] = new Point(px + 3 * k * ballRadius,16000);
-                  ballPositionArray[6] = new Point(px + 3 * k * ballRadius,16000);
-                  ballPositionArray[11] = new Point(px + 4 * k * ballRadius,16000);
-                  ballPositionArray[12] = new Point(px + 4 * k * ballRadius,16000);
-                  ballPositionArray[13] = new Point(px + 4 * k * ballRadius,16000);
-                  ballPositionArray[14] = new Point(px + 4 * k * ballRadius,16000);
-                  ballPositionArray[3] = new Point(px + 4 * k * ballRadius,16000);
+                  ballPositionArray[0] = new Point(-15000, 0);
+                  ballPositionArray[1] = new Point(px, 0);
+                  ballPositionArray[2] = new Point(px + k * ballRadius, ballRadius * j);
+                  ballPositionArray[15] = new Point(px + k * ballRadius, -ballRadius * j);
+                  ballPositionArray[8] = new Point(px + 2 * k * ballRadius, 0);
+                  ballPositionArray[5] = new Point(px + 2 * k * ballRadius, 2 * ballRadius * j);
+                  ballPositionArray[10] = new Point(px + 2 * k * ballRadius, -2 * ballRadius * j);
+                  ballPositionArray[7] = new Point(px + 3 * k * ballRadius, 16000);
+                  ballPositionArray[4] = new Point(px + 3 * k * ballRadius, 16000);
+                  ballPositionArray[9] = new Point(px + 3 * k * ballRadius, 16000);
+                  ballPositionArray[6] = new Point(px + 3 * k * ballRadius, 16000);
+                  ballPositionArray[11] = new Point(px + 4 * k * ballRadius, 16000);
+                  ballPositionArray[12] = new Point(px + 4 * k * ballRadius, 16000);
+                  ballPositionArray[13] = new Point(px + 4 * k * ballRadius, 16000);
+                  ballPositionArray[14] = new Point(px + 4 * k * ballRadius, 16000);
+                  ballPositionArray[3] = new Point(px + 4 * k * ballRadius, 16000);
                   break;
                case 10:
                   ballPositionArray = setupLevelFromTemplate();
@@ -3968,82 +3726,82 @@ package
                   ballPositionArray = setupLevelFromTemplate();
                   break;
                case 16:
-                  ballPositionArray[0] = new Point(-15000,0);
-                  ballPositionArray[1] = new Point(px,0);
-                  ballPositionArray[2] = new Point(px + k * ballRadius,ballRadius * j);
-                  ballPositionArray[15] = new Point(px + k * ballRadius,-ballRadius * j);
-                  ballPositionArray[8] = new Point(px + 2 * k * ballRadius,0);
-                  ballPositionArray[5] = new Point(px + 2 * k * ballRadius,2 * ballRadius * j);
-                  ballPositionArray[10] = new Point(px + 2 * k * ballRadius,-2 * ballRadius * j);
-                  ballPositionArray[7] = new Point(px + 3 * k * ballRadius,1 * ballRadius * j);
-                  ballPositionArray[4] = new Point(px + 3 * k * ballRadius,3 * ballRadius * j);
-                  ballPositionArray[9] = new Point(px + 3 * k * ballRadius,-1 * ballRadius * j);
-                  ballPositionArray[6] = new Point(px + 3 * k * ballRadius,-3 * ballRadius * j);
-                  ballPositionArray[11] = new Point(px + 4 * k * ballRadius,16000);
-                  ballPositionArray[12] = new Point(px + 4 * k * ballRadius,16000);
-                  ballPositionArray[13] = new Point(px + 4 * k * ballRadius,16000);
-                  ballPositionArray[14] = new Point(px + 4 * k * ballRadius,16000);
-                  ballPositionArray[3] = new Point(px + 4 * k * ballRadius,16000);
+                  ballPositionArray[0] = new Point(-15000, 0);
+                  ballPositionArray[1] = new Point(px, 0);
+                  ballPositionArray[2] = new Point(px + k * ballRadius, ballRadius * j);
+                  ballPositionArray[15] = new Point(px + k * ballRadius, -ballRadius * j);
+                  ballPositionArray[8] = new Point(px + 2 * k * ballRadius, 0);
+                  ballPositionArray[5] = new Point(px + 2 * k * ballRadius, 2 * ballRadius * j);
+                  ballPositionArray[10] = new Point(px + 2 * k * ballRadius, -2 * ballRadius * j);
+                  ballPositionArray[7] = new Point(px + 3 * k * ballRadius, 1 * ballRadius * j);
+                  ballPositionArray[4] = new Point(px + 3 * k * ballRadius, 3 * ballRadius * j);
+                  ballPositionArray[9] = new Point(px + 3 * k * ballRadius, -1 * ballRadius * j);
+                  ballPositionArray[6] = new Point(px + 3 * k * ballRadius, -3 * ballRadius * j);
+                  ballPositionArray[11] = new Point(px + 4 * k * ballRadius, 16000);
+                  ballPositionArray[12] = new Point(px + 4 * k * ballRadius, 16000);
+                  ballPositionArray[13] = new Point(px + 4 * k * ballRadius, 16000);
+                  ballPositionArray[14] = new Point(px + 4 * k * ballRadius, 16000);
+                  ballPositionArray[3] = new Point(px + 4 * k * ballRadius, 16000);
                   break;
                case 17:
                   ballPositionArray = setupLevelFromTemplate();
                   break;
                case 18:
-                  ballPositionArray[0] = new Point(-15000,0);
-                  ballPositionArray[1] = new Point(px,0);
-                  ballPositionArray[2] = new Point(px + k * ballRadius,ballRadius * j);
-                  ballPositionArray[15] = new Point(px + k * ballRadius,-ballRadius * j);
-                  ballPositionArray[8] = new Point(px + 2 * k * ballRadius,0);
-                  ballPositionArray[5] = new Point(px + 2 * k * ballRadius,2 * ballRadius * j);
-                  ballPositionArray[10] = new Point(px + 2 * k * ballRadius,-2 * ballRadius * j);
-                  ballPositionArray[7] = new Point(px + 3 * k * ballRadius,16000);
-                  ballPositionArray[4] = new Point(px + 3 * k * ballRadius,16000);
-                  ballPositionArray[9] = new Point(px + 3 * k * ballRadius,16000);
-                  ballPositionArray[6] = new Point(px + 3 * k * ballRadius,16000);
-                  ballPositionArray[11] = new Point(px + 4 * k * ballRadius,16000);
-                  ballPositionArray[12] = new Point(px + 4 * k * ballRadius,16000);
-                  ballPositionArray[13] = new Point(px + 4 * k * ballRadius,16000);
-                  ballPositionArray[14] = new Point(px + 4 * k * ballRadius,16000);
-                  ballPositionArray[3] = new Point(px + 4 * k * ballRadius,16000);
+                  ballPositionArray[0] = new Point(-15000, 0);
+                  ballPositionArray[1] = new Point(px, 0);
+                  ballPositionArray[2] = new Point(px + k * ballRadius, ballRadius * j);
+                  ballPositionArray[15] = new Point(px + k * ballRadius, -ballRadius * j);
+                  ballPositionArray[8] = new Point(px + 2 * k * ballRadius, 0);
+                  ballPositionArray[5] = new Point(px + 2 * k * ballRadius, 2 * ballRadius * j);
+                  ballPositionArray[10] = new Point(px + 2 * k * ballRadius, -2 * ballRadius * j);
+                  ballPositionArray[7] = new Point(px + 3 * k * ballRadius, 16000);
+                  ballPositionArray[4] = new Point(px + 3 * k * ballRadius, 16000);
+                  ballPositionArray[9] = new Point(px + 3 * k * ballRadius, 16000);
+                  ballPositionArray[6] = new Point(px + 3 * k * ballRadius, 16000);
+                  ballPositionArray[11] = new Point(px + 4 * k * ballRadius, 16000);
+                  ballPositionArray[12] = new Point(px + 4 * k * ballRadius, 16000);
+                  ballPositionArray[13] = new Point(px + 4 * k * ballRadius, 16000);
+                  ballPositionArray[14] = new Point(px + 4 * k * ballRadius, 16000);
+                  ballPositionArray[3] = new Point(px + 4 * k * ballRadius, 16000);
                   break;
                case 19:
                   ballPositionArray = setupLevelFromTemplate();
                   break;
                case 20:
-                  ballPositionArray[0] = new Point(-15000,0);
-                  ballPositionArray[1] = new Point(px,0);
-                  ballPositionArray[2] = new Point(px + k * ballRadius,ballRadius * j);
-                  ballPositionArray[15] = new Point(px + k * ballRadius,-ballRadius * j);
-                  ballPositionArray[8] = new Point(px + 2 * k * ballRadius,0);
-                  ballPositionArray[5] = new Point(px + 2 * k * ballRadius,2 * ballRadius * j);
-                  ballPositionArray[10] = new Point(px + 2 * k * ballRadius,-2 * ballRadius * j);
-                  ballPositionArray[7] = new Point(px + 3 * k * ballRadius,1 * ballRadius * j);
-                  ballPositionArray[4] = new Point(px + 3 * k * ballRadius,3 * ballRadius * j);
-                  ballPositionArray[9] = new Point(px + 3 * k * ballRadius,-1 * ballRadius * j);
-                  ballPositionArray[6] = new Point(px + 3 * k * ballRadius,-3 * ballRadius * j);
-                  ballPositionArray[11] = new Point(px + 4 * k * ballRadius,0);
-                  ballPositionArray[12] = new Point(px + 4 * k * ballRadius,2 * ballRadius * j);
-                  ballPositionArray[13] = new Point(px + 4 * k * ballRadius,-2 * ballRadius * j);
-                  ballPositionArray[14] = new Point(px + 4 * k * ballRadius,4 * ballRadius * j);
-                  ballPositionArray[3] = new Point(px + 4 * k * ballRadius,-4 * ballRadius * j);
+                  ballPositionArray[0] = new Point(-15000, 0);
+                  ballPositionArray[1] = new Point(px, 0);
+                  ballPositionArray[2] = new Point(px + k * ballRadius, ballRadius * j);
+                  ballPositionArray[15] = new Point(px + k * ballRadius, -ballRadius * j);
+                  ballPositionArray[8] = new Point(px + 2 * k * ballRadius, 0);
+                  ballPositionArray[5] = new Point(px + 2 * k * ballRadius, 2 * ballRadius * j);
+                  ballPositionArray[10] = new Point(px + 2 * k * ballRadius, -2 * ballRadius * j);
+                  ballPositionArray[7] = new Point(px + 3 * k * ballRadius, 1 * ballRadius * j);
+                  ballPositionArray[4] = new Point(px + 3 * k * ballRadius, 3 * ballRadius * j);
+                  ballPositionArray[9] = new Point(px + 3 * k * ballRadius, -1 * ballRadius * j);
+                  ballPositionArray[6] = new Point(px + 3 * k * ballRadius, -3 * ballRadius * j);
+                  ballPositionArray[11] = new Point(px + 4 * k * ballRadius, 0);
+                  ballPositionArray[12] = new Point(px + 4 * k * ballRadius, 2 * ballRadius * j);
+                  ballPositionArray[13] = new Point(px + 4 * k * ballRadius, -2 * ballRadius * j);
+                  ballPositionArray[14] = new Point(px + 4 * k * ballRadius, 4 * ballRadius * j);
+                  ballPositionArray[3] = new Point(px + 4 * k * ballRadius, -4 * ballRadius * j);
                   break;
                case 21:
-                  ballPositionArray[0] = new Point(-15000,0);
-                  ballPositionArray[1] = new Point(px,0);
-                  ballPositionArray[2] = new Point(px + k * ballRadius,ballRadius * j);
-                  ballPositionArray[15] = new Point(px + k * ballRadius,-ballRadius * j);
-                  ballPositionArray[8] = new Point(px + 2 * k * ballRadius,0);
-                  ballPositionArray[5] = new Point(px + 2 * k * ballRadius,2 * ballRadius * j);
-                  ballPositionArray[10] = new Point(px + 2 * k * ballRadius,-2 * ballRadius * j);
-                  ballPositionArray[7] = new Point(px + 3 * k * ballRadius,1 * ballRadius * j);
-                  ballPositionArray[4] = new Point(px + 3 * k * ballRadius,3 * ballRadius * j);
-                  ballPositionArray[9] = new Point(px + 3 * k * ballRadius,-1 * ballRadius * j);
-                  ballPositionArray[6] = new Point(px + 3 * k * ballRadius,-3 * ballRadius * j);
-                  ballPositionArray[11] = new Point(px + 4 * k * ballRadius,0);
-                  ballPositionArray[12] = new Point(px + 4 * k * ballRadius,2 * ballRadius * j);
-                  ballPositionArray[13] = new Point(px + 4 * k * ballRadius,-2 * ballRadius * j);
-                  ballPositionArray[14] = new Point(px + 4 * k * ballRadius,4 * ballRadius * j);
-                  ballPositionArray[3] = new Point(px + 4 * k * ballRadius,-4 * ballRadius * j);
+                  ballPositionArray[0] = new Point(-15000, 0);
+                  ballPositionArray[1] = new Point(px, 0);
+                  ballPositionArray[2] = new Point(px + k * ballRadius, ballRadius * j);
+                  ballPositionArray[15] = new Point(px + k * ballRadius, -ballRadius * j);
+                  ballPositionArray[8] = new Point(px + 2 * k * ballRadius, 0);
+                  ballPositionArray[5] = new Point(px + 2 * k * ballRadius, 2 * ballRadius * j);
+                  ballPositionArray[10] = new Point(px + 2 * k * ballRadius, -2 * ballRadius * j);
+                  ballPositionArray[7] = new Point(px + 3 * k * ballRadius, 1 * ballRadius * j);
+                  ballPositionArray[4] = new Point(px + 3 * k * ballRadius, 3 * ballRadius * j);
+                  ballPositionArray[9] = new Point(px + 3 * k * ballRadius, -1 * ballRadius * j);
+                  ballPositionArray[6] = new Point(px + 3 * k * ballRadius, -3 * ballRadius * j);
+                  ballPositionArray[11] = new Point(px + 4 * k * ballRadius, 0);
+                  ballPositionArray[12] = new Point(px + 4 * k * ballRadius, 2 * ballRadius * j);
+                  ballPositionArray[13] = new Point(px + 4 * k * ballRadius, -2 * ballRadius * j);
+                  ballPositionArray[14] = new Point(px + 4 * k * ballRadius, 4 * ballRadius * j);
+                  ballPositionArray[3] = new Point(px + 4 * k * ballRadius, -4 * ballRadius * j);
             }
             return ballPositionArray;
          };
@@ -4060,13 +3818,13 @@ package
             levels.balls.gotoAndStop(currentLevel);
             balls = levels.balls;
             numBalls = balls.numChildren;
-            for(n = 0; n < numBalls; n++)
+            for (n = 0; n < numBalls; n++)
             {
                ball = balls.getChildAt(n);
-               index = int(ball.name.slice(1,3));
-               if(index == 0)
+               index = int(ball.name.slice(1, 3));
+               if (index == 0)
                {
-                  if(ball.y > 160)
+                  if (ball.y > 160)
                   {
                      cueBallInHand = true;
                   }
@@ -4075,7 +3833,7 @@ package
                      cueBallInHand = false;
                   }
                }
-               ballPositionArray[index] = new Point(ball.x / physScale,ball.y / physScale);
+               ballPositionArray[index] = new Point(ball.x / physScale, ball.y / physScale);
             }
             balls = null;
             levels = null;
@@ -4090,65 +3848,65 @@ package
             var message:String = null;
             complete = false;
             lost = false;
-            if(foulsProhibited == true)
+            if (foulsProhibited == true)
             {
-               if(fouled == true)
+               if (fouled == true)
                {
                   lost = true;
                }
             }
             tricksRequired = false;
             tricksAchieved = false;
-            if(cannonsRequiredOn == true || banksRequiredOn == true || kicksRequiredOn == true || kissesRequiredOn == true || combosRequiredOn == true)
+            if (cannonsRequiredOn == true || banksRequiredOn == true || kicksRequiredOn == true || kissesRequiredOn == true || combosRequiredOn == true)
             {
                tricksRequired = true;
-               if(cannonsRequired == 0 && banksRequired == 0 && kicksRequired == 0 && kissesRequired == 0 && combosRequired == 0)
+               if (cannonsRequired == 0 && banksRequired == 0 && kicksRequired == 0 && kissesRequired == 0 && combosRequired == 0)
                {
                   tricksAchieved = true;
                }
             }
-            if(lost == false)
+            if (lost == false)
             {
-               if(tricksRequired == false && ballsRemaining == 0 || tricksRequired == true && tricksAchieved == true)
+               if (tricksRequired == false && ballsRemaining == 0 || tricksRequired == true && tricksAchieved == true)
                {
                   complete = true;
                }
             }
             message = "You fouled";
-            if(complete == false && fouled == false)
+            if (complete == false && fouled == false)
             {
-               if(timeRemainingOn == true && timeRemaining <= 0)
+               if (timeRemainingOn == true && timeRemaining <= 0)
                {
                   lost = true;
                   message = "You ran out of time.";
                }
-               if(shotsRemainingOn == true && shotsRemaining <= 0)
+               if (shotsRemainingOn == true && shotsRemaining <= 0)
                {
                   lost = true;
                   message = "You ran out of shots.";
                }
-               if(cannonsRequiredOn == true || kissesRequiredOn == true || combosRequiredOn == true)
+               if (cannonsRequiredOn == true || kissesRequiredOn == true || combosRequiredOn == true)
                {
-                  if(ballsRemaining < 2)
+                  if (ballsRemaining < 2)
                   {
                      lost = true;
-                     message = "You didn\'t perform the required trick shots.";
+                     message = "You didn't perform the required trick shots.";
                   }
                }
-               if(kicksRequiredOn == true || banksRequiredOn == true)
+               if (kicksRequiredOn == true || banksRequiredOn == true)
                {
-                  if(ballsRemaining == 0)
+                  if (ballsRemaining == 0)
                   {
                      lost = true;
-                     message = "You didn\'t perform the required trick shots.";
+                     message = "You didn't perform the required trick shots.";
                   }
                }
             }
-            if(lost == true)
+            if (lost == true)
             {
                gameRunning = false;
                preventQuit = true;
-               if(currentLevel < 21)
+               if (currentLevel < 21)
                {
                   showLevelFailed(message);
                }
@@ -4157,11 +3915,11 @@ package
                   showChallengeComplete();
                }
             }
-            if(complete == true)
+            if (complete == true)
             {
                gameRunning = false;
                preventQuit = true;
-               if(currentLevel < 21)
+               if (currentLevel < 21)
                {
                   showLevelComplete();
                }
@@ -4171,7 +3929,7 @@ package
                }
             }
          };
-         removeEventListener(Event.ADDED_TO_STAGE,this.init);
+         removeEventListener(Event.ADDED_TO_STAGE, this.init);
          gameMode = 0;
          stageWidth = 800;
          stageHeight = 600;
@@ -4275,9 +4033,11 @@ package
          ballArraySim = new Array();
          ballArraySim2 = new Array();
          thisURL = stage.loaderInfo.url;
-         oldAim = new Vector2D(0,0);
+         oldAim = new Vector2D(0, 0);
          initArrays();
          initMenus();
       }
    }
 }
+
+

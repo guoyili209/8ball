@@ -52,7 +52,7 @@ package com.greensock.core
       
       public var cachedPaused:Boolean;
       
-      public var data;
+      public var data:*;
       
       public function TweenCore(duration:Number = 0, vars:Object = null)
       {

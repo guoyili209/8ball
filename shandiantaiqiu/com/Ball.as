@@ -21,7 +21,7 @@ package com
       
       private var ball:Sprite;
       
-      private var canvas;
+      private var canvas:*;
       
       private var spot:Sprite;
       
@@ -59,7 +59,7 @@ package com
          this.ballCanvas.addChild(base);
          if(this.ballType == 1)
          {
-            base.graphics.beginFill(16777215);
+            base.graphics.beginFill(0xffffff);
             base.graphics.drawCircle(0,0,this.circRad);
             base.graphics.endFill();
          }
@@ -85,7 +85,7 @@ package com
          shade.width = this.circRad * 2.2;
          shade.height = this.circRad * 2.2;
          this._mask = new Sprite();
-         this._mask.graphics.beginFill(16711935);
+         this._mask.graphics.beginFill(0xff00ff);
          this._mask.graphics.drawCircle(0,0,this.circRad);
          this.ballCanvas.addChild(this._mask);
          this.ballCanvas.mask = this._mask;
@@ -177,7 +177,7 @@ package com
                }
                else
                {
-                  this.canvas.beginFill(16777215);
+                  this.canvas.beginFill(0xffffff);
                }
                this.canvas.drawEllipse(-this.circRad * 0.7,_y1a,this.circRad * 0.7 * 2,_ha);
                this.canvas.endFill();
@@ -187,7 +187,7 @@ package com
                }
                else
                {
-                  this.canvas.beginFill(16777215);
+                  this.canvas.beginFill(0xffffff);
                }
                this.canvas.drawEllipse(-this.circRad * 0.7,_y1b,this.circRad * 0.7 * 2,_hb);
                this.canvas.endFill();
@@ -197,7 +197,7 @@ package com
                this.canvas.beginFill(this.ballColor);
                this.canvas.drawCircle(0,0,this.circRad);
                this.canvas.endFill();
-               this.canvas.beginFill(16777215);
+               this.canvas.beginFill(0xffffff);
                if(rotationX >= Math.PI)
                {
                   this.canvas.drawEllipse(-this.circRad * 0.7,_y1b,this.circRad * 0.7 * 2,_hb);

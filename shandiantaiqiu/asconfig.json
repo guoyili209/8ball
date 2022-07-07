@@ -1,0 +1,12 @@
+{
+	"compilerOptions": {
+		"source-path": [
+			"./"
+		],
+		"library-path": [
+			"./10.swc"
+		],
+		"output": "bin/Main.swf"
+	},
+	"mainClass": "Preloader"
+}
